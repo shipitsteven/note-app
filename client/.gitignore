@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+#database
+noteAppDB.db
+
 # production
 /build
 
