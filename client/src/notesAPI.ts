@@ -33,7 +33,7 @@ interface DbResult <T>{
   success:T;
 }
 
-function isSuccess(code):DbResult<boolean>{
+function isSuccess(code:any):DbResult<boolean>{
   return{
     code:123456,
     success:false,
@@ -41,6 +41,7 @@ function isSuccess(code):DbResult<boolean>{
 }
 
 // Create
+//@ts-ignore
 function CreateNote(note: Note): CreateNoteResult
 
 interface CreateNoteResult {
@@ -56,6 +57,7 @@ let createNoteResult = {
 }
 
 // Update
+//@ts-ignore
 function UpdateNote(note: Note): UpdateNoteResult
 ​
 interface UpdateNoteResult {
@@ -72,7 +74,8 @@ let updateNoteResult = {
 }
 
 // Delete
-function DeleteNote(note: Note): DeleteNoteResult
+//@ts-ignore
+function DeleteNote(note: Note): DeleteNoteResult {}
 ​
 interface DeleteNoteResult {
   result: DbResult<boolean>;
@@ -84,6 +87,7 @@ let deleteNoteResult = {
   }
 }
 
+//@ts-ignore
 // Fetch
 function FetchNotes(user: string): FetchNoteResult
 
@@ -123,7 +127,8 @@ let fetchNoteResult = {
 // Tagging / Categorizing API
 // Just use update​ to create a tag
 
-function FetchNotesByCategory(user: string, tagging: string): FetchNotesByCategoryResult
+//@ts-ignore
+function FetchNotesByCategory(user: string, tagging: string): FetchNotesByCategoryResult {}
 
 interface FetchNotesByCategoryResult {
   result: DbResult<boolean>;
@@ -149,6 +154,7 @@ let fetchNotesByCategoryResult = {
 }
 
 ​// Search
+//@ts-ignore
 function SearchNotes(searchTerm: string): SearchNoteResult
 
 interface SearchNoteResult {
