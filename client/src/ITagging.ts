@@ -2,8 +2,8 @@
 interface tagFunction{
     add(tag:Tag, id:Note):TagResult;
     delete(id:string):TagResult;
-    update(tag:Tag,id:Note):TagResult;
-    get(id:Note):TagResultWithData<Tag|null>
+    //update(tag:Tag,id:Note):TagResult;
+    get(id:string):TagResultWithData<Tag|null>
 }
 
 interface TagProvider{
@@ -65,7 +65,7 @@ class SimpleTagFunction implements tagFunction{
         }
     }
 
-    update(tag:Tag,id:Note):TagResult{
+    /*update(tag:Tag,id:Note):TagResult{
         if(id.iD in this.tagFunction){
             delete this.tagFunction[id.iD];
             this.tagFunction[id.iD] = tag;
@@ -73,11 +73,11 @@ class SimpleTagFunction implements tagFunction{
         }else {
             return new inMemoryResult(false);
         }
-    }
+    }*/
 
-    get(id:Note):TagResultWithData<Tag|null>{
-        if(id.iD in this.tagFunction){
-            let tag = this.tagFunction[id.iD];
+    get(id:string):TagResultWithData<Tag|null>{
+        if(id in this.tagFunction){
+            let tag = this.tagFunction[id];
             return new inMemoryDataResult(true, tag);
         }else{
             return new inMemoryDataResult(false, null);
@@ -128,9 +128,35 @@ class Test{
         let tag2 = tagFunction.tagFunction[note.iD];
         console.log(tag2.label);
     }
+
+    TestDelete():void{
+        let tagFunction = new SimpleTagFunction();
+        let note = new Note('Note_1');
+        let id = 'Note_1';
+        let tag = new Tag('Math');
+        tag.changeColor('red');
+        tag.editLabel('art');
+        tagFunction.add(tag,note);
+        console.log(id in tagFunction.tagFunction);
+        tagFunction.delete(id);
+        console.log(id in tagFunction.tagFunction);
+    }
+
+    TestGet():Tag|null{
+        let tagFunction = new SimpleTagFunction();
+        let note = new Note('Note_1');
+        let tag = new Tag('Math');
+        tag.changeColor('red');
+        tag.editLabel('art');
+        tagFunction.add(tag,note);
+        let result = tagFunction.get(note.iD);
+        return result.GetResult();
+    }
 }
 
 let t: Test = new Test();
 t.TestAdd();
+t.TestDelete();
+t.TestGet();
 
 export {}
