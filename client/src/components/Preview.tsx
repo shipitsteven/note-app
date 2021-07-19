@@ -1,20 +1,18 @@
-import React from "react";
-const marked = require("marked");
+import React from 'react'
+import marked from 'marked'
 
 marked.setOptions({
-    breaks: true
-});
+    breaks: true,
+})
 
 interface Props {
-    text: string;
- }
+    text: string
+}
 
-
-export const Preview: React.FC<Props> = ({ text }) => {
+export const Preview: React.FC<Props> = ({ text }: Props) => {
     const toHTML = () => {
-        return {__html: marked(text)}
-     }
+        return { __html: marked(text) }
+    }
 
-
-    return (<div dangerouslySetInnerHTML={toHTML() } className="preview"/>)
- }
+    return <div dangerouslySetInnerHTML={toHTML()} className="preview" />
+}
