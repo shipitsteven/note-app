@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
+import NoteIcon from '@material-ui/icons/Note'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import ListItem from '@material-ui/core/ListItem'
@@ -22,8 +23,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import InboxIcon from '@material-ui/icons/MoveToInbox'
 import MailIcon from '@material-ui/icons/Mail'
+import { fakeNotes } from '../mock/fakeNotes'
 
-const drawerWidth = 240
+const drawerWidth = 380
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -85,6 +87,9 @@ const useStyles = makeStyles((theme: Theme) =>
     content: {
       flexGrow: 1,
       padding: theme.spacing(3),
+    },
+    inline: {
+      display: 'inline',
     },
   })
 )
@@ -156,14 +161,36 @@ export default function NotesDrawer(props: Props): JSX.Element {
         </div>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
+          {open ? (
+            fakeNotes.map(({ title, text, date }) => (
+              <>
+                <ListItem key={title}>
+                  <ListItemText
+                    primary={
+                      <>
+                        <Typography variant="subtitle1">{title}</Typography>
+                      </>
+                    }
+                    secondary={
+                      <React.Fragment>
+                        <Typography variant="caption">{date}</Typography>
+                        <Typography variant="body1" color="textPrimary">
+                          {text}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                </ListItem>
+                <Divider component="li" />
+              </>
+            ))
+          ) : (
+            <ListItem>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                <NoteIcon />
               </ListItemIcon>
-              <ListItemText primary={text} />
             </ListItem>
-          ))}
+          )}
         </List>
         <Divider />
         <List>
