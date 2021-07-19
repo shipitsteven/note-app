@@ -93,7 +93,7 @@ interface Props {
   children: React.ReactNode
 }
 
-export default function MiniDrawer(props: Props): JSX.Element {
+export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
