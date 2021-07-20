@@ -99,10 +99,12 @@ class SimpleDataStore implements DataStore {
 export class Note {
     iD: string;
     note: string;
+    author: string;
 
-    constructor(iD: string) {
+    constructor(iD: string, author: string) {
         this.iD = iD;
         this.note = "";
+        this.author = author;
     }
 
     edit(text: string): void {
@@ -124,7 +126,7 @@ class Test {
     TestSave(): void {
         const DataStoreProvider = new SimpleDataStoreProvider();
         const Database = DataStoreProvider.Create();
-        const note = new Note("Note_1");
+        const note = new Note("Note_1", "Bob");
         Database.Create(note.iD);
         note.edit("Hello World!");
         Database.Save(note);
@@ -145,7 +147,7 @@ class Test {
     TestGet(): Note | null {
         const DataStoreProvider = new SimpleDataStoreProvider();
         const Database = DataStoreProvider.Create();
-        const note = new Note("Note_1");
+        const note = new Note("Note_1", "Jack");
         Database.Create(note.iD);
         note.edit("Hello World!");
         Database.Save(note);
@@ -156,8 +158,8 @@ class Test {
     TestGetAll(): Array<string> {
         const DataStoreProvider = new SimpleDataStoreProvider();
         const Database = DataStoreProvider.Create();
-        const note = new Note("Note_1");
-        const note2 = new Note("Note_2");
+        const note = new Note("Note_1", "Bill");
+        const note2 = new Note("Note_2", "Steve");
         Database.Create(note.iD);
         Database.Create(note2.iD);
         return Database.GetAll();
