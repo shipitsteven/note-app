@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.Note = void 0;
 var inMemoryDataStoreResult = /** @class */ (function () {
     function inMemoryDataStoreResult(success) {
         this.Success = success;
@@ -78,6 +79,7 @@ var Note = /** @class */ (function () {
     };
     return Note;
 }());
+exports.Note = Note;
 // Test class using simple data store
 var Test = /** @class */ (function () {
     function Test() {

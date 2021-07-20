@@ -96,7 +96,7 @@ class SimpleDataStore implements DataStore {
 
 
 // Simple note class which stores the name as iD and the content of note as note
-class Note {
+export class Note {
     iD: string;
     note: string;
 
@@ -105,7 +105,7 @@ class Note {
         this.note = "";
     }
 
-    edit(text: string) {
+    edit(text: string): void {
         this.note = text;
     }
 } 
