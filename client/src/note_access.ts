@@ -1,4 +1,4 @@
-import { Note, SimpleDataStore } from './note_storage';
+import { Note, User, SimpleDataStore } from './note_storage';
 
 interface NoteAccess {
     ValidateText(text: string): NoteAccessResult;
