@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { Dispatch } from 'react'
 import clsx from 'clsx'
 import {
+  alpha,
   createStyles,
   makeStyles,
   useTheme,
@@ -10,12 +11,15 @@ import Drawer from '@material-ui/core/Drawer'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import List from '@material-ui/core/List'
+import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
+import InputBase from '@material-ui/core/InputBase'
 import MenuIcon from '@material-ui/icons/Menu'
 import NoteIcon from '@material-ui/icons/Note'
+import SearchIcon from '@material-ui/icons/Search'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import ListItem from '@material-ui/core/ListItem'
@@ -24,6 +28,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import InboxIcon from '@material-ui/icons/MoveToInbox'
 import MailIcon from '@material-ui/icons/Mail'
 import { fakeNotes } from '../mock/fakeNotes'
+import { SetStateAction } from 'react'
 
 const drawerWidth = 380
 
@@ -91,11 +96,50 @@ const useStyles = makeStyles((theme: Theme) =>
     inline: {
       display: 'inline',
     },
+    search: {
+      position: 'relative',
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: alpha(theme.palette.common.white, 0.15),
+      '&:hover': {
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
+      },
+      marginRight: theme.spacing(2),
+      marginLeft: 0,
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(3),
+        width: 'auto',
+      },
+    },
+    searchIcon: {
+      padding: theme.spacing(0, 2),
+      height: '100%',
+      position: 'absolute',
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    inputRoot: {
+      color: 'inherit',
+    },
+    inputInput: {
+      padding: theme.spacing(1, 1, 1, 0),
+      // vertical padding + font size from searchIcon
+      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+      transition: theme.transitions.create('width'),
+      width: '100%',
+      [theme.breakpoints.up('md')]: {
+        width: '20ch',
+      },
+    },
   })
 )
 
 interface Props {
-  children: React.ReactNode
+  children: React.ReactElement<any>
+  preview: boolean
+  handlePreview: Dispatch<SetStateAction<boolean>>
 }
 
 export default function NotesDrawer(props: Props): JSX.Element {
@@ -133,8 +177,31 @@ export default function NotesDrawer(props: Props): JSX.Element {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Top toolbar
+            [Note Title Goes Here]
           </Typography>
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
+              <SearchIcon />
+            </div>
+            <InputBase
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{ 'aria-label': 'search' }}
+            />
+          </div>
+          <Button
+            variant="contained"
+            color="secondary"
+            disableElevation
+            onClick={() => {
+              props.handlePreview(!props.preview)
+            }}
+          >
+            Toggle Preview
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer

@@ -8,12 +8,18 @@ export const StateContainer: React.FC = () => {
     '# Hello World \n## Write in Markdown, see preview\n**bold** _italic_ \nTry typing markdown here'
   )
 
+  const [preview, setPreview] = useState(true)
+
   return (
     <>
-      <NotesDrawer>
+      <NotesDrawer preview={preview} handlePreview={setPreview.bind(this)}>
         <div className="flex-container">
-          <Editable value={value} handleChange={setValue.bind(this)} />
-          <Preview text={value} />
+          <Editable
+            value={value}
+            handleChange={setValue.bind(this)}
+            preview={preview}
+          />
+          <Preview text={value} preview={preview} />
         </div>
       </NotesDrawer>
     </>
