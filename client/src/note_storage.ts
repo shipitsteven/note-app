@@ -3,7 +3,7 @@ interface DataStore {
     Save(note: Note): DataStoreResult;
     Delete(id: string): DataStoreResult;
     Get(id: string): DataStoreResultWithData<Note | null>;
-    Create(id: string): DataStoreResult;
+    Create(id: string, author: string): DataStoreResult;
     GetAll(): Array<string>;
 }
 
@@ -83,8 +83,8 @@ class SimpleDataStore implements DataStore {
         }
     }
 
-    Create(id: string): DataStoreResult {
-        this.DataStore[id] = new Note(id);
+    Create(id: string, author: string): DataStoreResult {
+        this.DataStore[id] = new Note(id, author);
         return new inMemoryDataStoreResult(true);
     }
 
@@ -118,7 +118,7 @@ class Test {
     TestCreate(): boolean {
         const DataStoreProvider = new SimpleDataStoreProvider();
         const Database = DataStoreProvider.Create();
-        Database.Create("Note_1");
+        Database.Create("Note_1", "Bob");
         const id = "Note_1";
         return id in Database.DataStore;
     }
@@ -127,7 +127,7 @@ class Test {
         const DataStoreProvider = new SimpleDataStoreProvider();
         const Database = DataStoreProvider.Create();
         const note = new Note("Note_1", "Bob");
-        Database.Create(note.iD);
+        Database.Create(note.iD, note.author);
         note.edit("Hello World!");
         Database.Save(note);
         const note2 = Database.DataStore[note.iD];
@@ -137,7 +137,7 @@ class Test {
     TestDelete(): void {
         const DataStoreProvider = new SimpleDataStoreProvider();
         const Database = DataStoreProvider.Create();
-        Database.Create("Note_1");
+        Database.Create("Note_1", "Bob");
         const id = "Note_1";
         console.log(id in Database.DataStore);
         Database.Delete(id);
@@ -148,7 +148,7 @@ class Test {
         const DataStoreProvider = new SimpleDataStoreProvider();
         const Database = DataStoreProvider.Create();
         const note = new Note("Note_1", "Jack");
-        Database.Create(note.iD);
+        Database.Create(note.iD, note.author);
         note.edit("Hello World!");
         Database.Save(note);
         const result = Database.Get(note.iD);
@@ -160,8 +160,8 @@ class Test {
         const Database = DataStoreProvider.Create();
         const note = new Note("Note_1", "Bill");
         const note2 = new Note("Note_2", "Steve");
-        Database.Create(note.iD);
-        Database.Create(note2.iD);
+        Database.Create(note.iD, note.author);
+        Database.Create(note2.iD, note2.author);
         return Database.GetAll();
     }
 }
