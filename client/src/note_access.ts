@@ -1,4 +1,4 @@
-import { Note, User, SimpleDataStore } from './note_storage';
+import { Note, SimpleDataStore } from './note_storage';
 
 interface NoteAccess {
     ValidateText(text: string): NoteAccessResult;
@@ -154,5 +154,9 @@ class SimpleNoteAccess implements NoteAccess {
             console.log('Note With That Name Does Not Exist');
             return new inMemoryNoteAccessResultWithNote(false, null);
         }
+    }
+
+    class User {
+        
     }
 }
