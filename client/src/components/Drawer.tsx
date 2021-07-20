@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Dispatch } from 'react'
 import clsx from 'clsx'
 import {
   alpha,
@@ -11,6 +11,7 @@ import Drawer from '@material-ui/core/Drawer'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import List from '@material-ui/core/List'
+import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
@@ -27,6 +28,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import InboxIcon from '@material-ui/icons/MoveToInbox'
 import MailIcon from '@material-ui/icons/Mail'
 import { fakeNotes } from '../mock/fakeNotes'
+import { SetStateAction } from 'react'
 
 const drawerWidth = 380
 
@@ -135,7 +137,9 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface Props {
-  children: React.ReactNode
+  children: React.ReactElement<any>
+  preview: boolean
+  handlePreview: Dispatch<SetStateAction<boolean>>
 }
 
 export default function NotesDrawer(props: Props): JSX.Element {
@@ -188,6 +192,16 @@ export default function NotesDrawer(props: Props): JSX.Element {
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
+          <Button
+            variant="contained"
+            color="secondary"
+            disableElevation
+            onClick={() => {
+              props.handlePreview(!props.preview)
+            }}
+          >
+            Toggle Preview
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer
