@@ -50,6 +50,12 @@ class inMemoryDataStoreResultWithData<T> implements DataStoreResultWithData<T> {
     }
 }
 
+class SimpleDataStoreProvider implements DataStoreProvider {
+    Create(): SimpleDataStore {
+        return new SimpleDataStore();
+    }
+}
+
 // Simple data store class that uses a dictionary as the database
 class SimpleDataStore implements DataStore {
     DataStore: {[iD: string]: Note} = {};
@@ -70,7 +76,7 @@ class SimpleDataStore implements DataStore {
 
     Get(id: string): DataStoreResultWithData<Note | null> {
         if (id in this.DataStore) {
-            let note = this.DataStore[id];
+            const note = this.DataStore[id];
             return new inMemoryDataStoreResultWithData(true, note);
         } else {
             return new inMemoryDataStoreResultWithData(false, null);
@@ -83,7 +89,7 @@ class SimpleDataStore implements DataStore {
     }
 
     GetAll(): Array<string> {
-        let notes = Object.keys(this.DataStore)
+        const notes = Object.keys(this.DataStore)
         return notes;
     } 
 }
@@ -108,45 +114,50 @@ class Note {
 class Test {
 
     TestCreate(): boolean {
-        let Database = new SimpleDataStore();
+        const DataStoreProvider = new SimpleDataStoreProvider();
+        const Database = DataStoreProvider.Create();
         Database.Create("Note_1");
-        let id = "Note_1";
+        const id = "Note_1";
         return id in Database.DataStore;
     }
 
     TestSave(): void {
-        let Database = new SimpleDataStore();
-        let note = new Note("Note_1");
+        const DataStoreProvider = new SimpleDataStoreProvider();
+        const Database = DataStoreProvider.Create();
+        const note = new Note("Note_1");
         Database.Create(note.iD);
         note.edit("Hello World!");
         Database.Save(note);
-        let note2 = Database.DataStore[note.iD];
+        const note2 = Database.DataStore[note.iD];
         console.log(note2.note);
     }
 
     TestDelete(): void {
-        let Database = new SimpleDataStore();
+        const DataStoreProvider = new SimpleDataStoreProvider();
+        const Database = DataStoreProvider.Create();
         Database.Create("Note_1");
-        let id = "Note_1";
+        const id = "Note_1";
         console.log(id in Database.DataStore);
         Database.Delete(id);
         console.log(id in Database.DataStore);
     }
 
     TestGet(): Note | null {
-        let Database = new SimpleDataStore();
-        let note = new Note("Note_1");
+        const DataStoreProvider = new SimpleDataStoreProvider();
+        const Database = DataStoreProvider.Create();
+        const note = new Note("Note_1");
         Database.Create(note.iD);
         note.edit("Hello World!");
         Database.Save(note);
-        let result = Database.Get(note.iD);
+        const result = Database.Get(note.iD);
         return result.GetResult();
     }
 
     TestGetAll(): Array<string> {
-        let Database = new SimpleDataStore();
-        let note = new Note("Note_1");
-        let note2 = new Note("Note_2");
+        const DataStoreProvider = new SimpleDataStoreProvider();
+        const Database = DataStoreProvider.Create();
+        const note = new Note("Note_1");
+        const note2 = new Note("Note_2");
         Database.Create(note.iD);
         Database.Create(note2.iD);
         return Database.GetAll();

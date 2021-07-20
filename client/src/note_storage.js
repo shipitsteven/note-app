@@ -22,6 +22,14 @@ var inMemoryDataStoreResultWithData = /** @class */ (function () {
     };
     return inMemoryDataStoreResultWithData;
 }());
+var SimpleDataStoreProvider = /** @class */ (function () {
+    function SimpleDataStoreProvider() {
+    }
+    SimpleDataStoreProvider.prototype.Create = function () {
+        return new SimpleDataStore();
+    };
+    return SimpleDataStoreProvider;
+}());
 // Simple data store class that uses a dictionary as the database
 var SimpleDataStore = /** @class */ (function () {
     function SimpleDataStore() {
@@ -75,13 +83,15 @@ var Test = /** @class */ (function () {
     function Test() {
     }
     Test.prototype.TestCreate = function () {
-        var Database = new SimpleDataStore();
+        var DataStoreProvider = new SimpleDataStoreProvider();
+        var Database = DataStoreProvider.Create();
         Database.Create("Note_1");
         var id = "Note_1";
         return id in Database.DataStore;
     };
     Test.prototype.TestSave = function () {
-        var Database = new SimpleDataStore();
+        var DataStoreProvider = new SimpleDataStoreProvider();
+        var Database = DataStoreProvider.Create();
         var note = new Note("Note_1");
         Database.Create(note.iD);
         note.edit("Hello World!");
@@ -90,7 +100,8 @@ var Test = /** @class */ (function () {
         console.log(note2.note);
     };
     Test.prototype.TestDelete = function () {
-        var Database = new SimpleDataStore();
+        var DataStoreProvider = new SimpleDataStoreProvider();
+        var Database = DataStoreProvider.Create();
         Database.Create("Note_1");
         var id = "Note_1";
         console.log(id in Database.DataStore);
@@ -98,7 +109,8 @@ var Test = /** @class */ (function () {
         console.log(id in Database.DataStore);
     };
     Test.prototype.TestGet = function () {
-        var Database = new SimpleDataStore();
+        var DataStoreProvider = new SimpleDataStoreProvider();
+        var Database = DataStoreProvider.Create();
         var note = new Note("Note_1");
         Database.Create(note.iD);
         note.edit("Hello World!");
@@ -107,7 +119,8 @@ var Test = /** @class */ (function () {
         return result.GetResult();
     };
     Test.prototype.TestGetAll = function () {
-        var Database = new SimpleDataStore();
+        var DataStoreProvider = new SimpleDataStoreProvider();
+        var Database = DataStoreProvider.Create();
         var note = new Note("Note_1");
         var note2 = new Note("Note_2");
         Database.Create(note.iD);
