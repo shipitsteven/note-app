@@ -58,8 +58,8 @@ var SimpleDataStore = /** @class */ (function () {
             return new inMemoryDataStoreResultWithData(false, null);
         }
     };
-    SimpleDataStore.prototype.Create = function (id) {
-        this.DataStore[id] = new Note(id);
+    SimpleDataStore.prototype.Create = function (id, author) {
+        this.DataStore[id] = new Note(id, author);
         return new inMemoryDataStoreResult(true);
     };
     SimpleDataStore.prototype.GetAll = function () {
@@ -70,9 +70,11 @@ var SimpleDataStore = /** @class */ (function () {
 }());
 // Simple note class which stores the name as iD and the content of note as note
 var Note = /** @class */ (function () {
-    function Note(iD) {
+    function Note(iD, author) {
         this.iD = iD;
         this.note = "";
+        this.author = author;
+        this.tags = [];
     }
     Note.prototype.edit = function (text) {
         this.note = text;
@@ -87,15 +89,15 @@ var Test = /** @class */ (function () {
     Test.prototype.TestCreate = function () {
         var DataStoreProvider = new SimpleDataStoreProvider();
         var Database = DataStoreProvider.Create();
-        Database.Create("Note_1");
+        Database.Create("Note_1", "Bob");
         var id = "Note_1";
         return id in Database.DataStore;
     };
     Test.prototype.TestSave = function () {
         var DataStoreProvider = new SimpleDataStoreProvider();
         var Database = DataStoreProvider.Create();
-        var note = new Note("Note_1");
-        Database.Create(note.iD);
+        var note = new Note("Note_1", "Bob");
+        Database.Create(note.iD, note.author);
         note.edit("Hello World!");
         Database.Save(note);
         var note2 = Database.DataStore[note.iD];
@@ -104,7 +106,7 @@ var Test = /** @class */ (function () {
     Test.prototype.TestDelete = function () {
         var DataStoreProvider = new SimpleDataStoreProvider();
         var Database = DataStoreProvider.Create();
-        Database.Create("Note_1");
+        Database.Create("Note_1", "Bob");
         var id = "Note_1";
         console.log(id in Database.DataStore);
         Database.Delete(id);
@@ -113,8 +115,8 @@ var Test = /** @class */ (function () {
     Test.prototype.TestGet = function () {
         var DataStoreProvider = new SimpleDataStoreProvider();
         var Database = DataStoreProvider.Create();
-        var note = new Note("Note_1");
-        Database.Create(note.iD);
+        var note = new Note("Note_1", "Jack");
+        Database.Create(note.iD, note.author);
         note.edit("Hello World!");
         Database.Save(note);
         var result = Database.Get(note.iD);
@@ -123,10 +125,10 @@ var Test = /** @class */ (function () {
     Test.prototype.TestGetAll = function () {
         var DataStoreProvider = new SimpleDataStoreProvider();
         var Database = DataStoreProvider.Create();
-        var note = new Note("Note_1");
-        var note2 = new Note("Note_2");
-        Database.Create(note.iD);
-        Database.Create(note2.iD);
+        var note = new Note("Note_1", "Bill");
+        var note2 = new Note("Note_2", "Steve");
+        Database.Create(note.iD, note.author);
+        Database.Create(note2.iD, note2.author);
         return Database.GetAll();
     };
     return Test;
