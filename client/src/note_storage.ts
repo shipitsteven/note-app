@@ -100,11 +100,13 @@ export class Note {
     iD: string;
     note: string;
     author: string;
+    tags: Array<string>;
 
     constructor(iD: string, author: string) {
         this.iD = iD;
         this.note = "";
         this.author = author;
+        this.tags = [];
     }
 
     edit(text: string): void {
