@@ -1,10 +1,6 @@
 import { Note, SimpleDataStore } from './note_storage';
 
 interface NoteAccess {
-    ValidateText(text: string): NoteAccessResult;
-    ValidateName(name: string): NoteAccessResult;
-    ValidateNote(note: Note): NoteAccessResult;
-    ValidateUser(user: User): NoteAccessResult;
     Create(id: string): NoteAccessResult;
     Save(note: Note): NoteAccessResult;
     Delete(id: string): NoteAccessResult;
@@ -19,7 +15,7 @@ interface NoteAccessResultWithNote<T> extends NoteAccessResult {
     GetResult(): T;
 }
 
-class inMemoryNoteAccessResult implements NoteAccessResult {
+class SimpleNoteAccessResult implements NoteAccessResult {
     Success: boolean;
 
     constructor(success: boolean) {
@@ -31,7 +27,7 @@ class inMemoryNoteAccessResult implements NoteAccessResult {
     }
 }
 
-class inMemoryNoteAccessResultWithNote<T> implements NoteAccessResultWithNote<T> {
+class SimpleNoteAccessResultWithNote<T> implements NoteAccessResultWithNote<T> {
     Success: boolean;
     Result: T;
 
@@ -53,33 +49,33 @@ class inMemoryNoteAccessResultWithNote<T> implements NoteAccessResultWithNote<T>
 class SimpleNoteAccess implements NoteAccess {
     ValidateText(text: string): NoteAccessResult {
         if (text) {
-            return new inMemoryNoteAccessResult(true);
+            return new SimpleNoteAccessResult(true);
         } else {
-            return new inMemoryNoteAccessResult(false);
+            return new SimpleNoteAccessResult(false);
         }
     }
 
     ValidateName(name: string): NoteAccessResult {
         if (name in SimpleDataStore.GetAll()) {
-            return new inMemoryNoteAccessResult(false);
+            return new SimpleNoteAccessResult(false);
         } else {
-            return new inMemoryNoteAccessResult(true);
+            return new SimpleNoteAccessResult(true);
         }
     }
 
     ValidateNote(note: Note): NoteAccessResult {
         if (Note.id in SimpleDataStore.GetAll()) {
-            return new inMemoryNoteAccessResult(true);
+            return new SimpleNoteAccessResult(true);
         } else {
-            return new inMemoryNoteAccessResult(false);
+            return new SimpleNoteAccessResult(false);
         }
     }
 
     ValidateUser(user: User): NoteAccessResult {
         if (user) {
-            return new inMemoryNoteAccessResult(true);
+            return new SimpleNoteAccessResult(true);
         } else {
-            return new inMemoryNoteAccessResult(false);
+            return new SimpleNoteAccessResult(false);
         }    
     }
 
@@ -89,14 +85,14 @@ class SimpleNoteAccess implements NoteAccess {
             if (res.IsSuccess()) {
                 //replace these print statements with UI method calls
                 console.log('Successfully Created Note');
-                return new inMemoryNoteAccessResult(true);
+                return new SimpleNoteAccessResult(true);
             } else {
                 console.log('Could Not Create Note');
-                return new inMemoryNoteAccessResult(false);
+                return new SimpleNoteAccessResult(false);
             }
         } else {
             console.log('Name Already Exists');
-            return new inMemoryNoteAccessResult(false);
+            return new SimpleNoteAccessResult(false);
         }
     }
 
@@ -107,18 +103,18 @@ class SimpleNoteAccess implements NoteAccess {
                 if (res.IsSuccess()) {
                     // replace these print statements with UI method calls
                     console.log('Successfully Saved Note');
-                    return new inMemoryNoteAccessResult(true);
+                    return new SimpleNoteAccessResult(true);
                 } else {
                     console.log('Could Not Save Note');
-                    return new inMemoryNoteAccessResult(false);
+                    return new SimpleNoteAccessResult(false);
                 }
             } else {
                 console.log('Invalid User/Create Account');
-                return new inMemoryNoteAccessResult(false);
+                return new SimpleNoteAccessResult(false);
             }
         } else {
             console.log('Invalid Note');
-            return new inMemoryNoteAccessResult(false);
+            return new SimpleNoteAccessResult(false);
         }
     }
 
@@ -128,14 +124,14 @@ class SimpleNoteAccess implements NoteAccess {
             if (res.IsSuccess()) {
                 // replace these print statement with UI method calls
                 console.log('Successfully Deleted Note');
-                return new inMemoryNoteAccessResult(true);
+                return new SimpleNoteAccessResult(true);
             } else {
                 console.log('Could Not Delete Note');
-                return new inMemoryNoteAccessResult(false);
+                return new SimpleNoteAccessResult(false);
             }
         } else {
             console.log('Note With That Name Does Not Exist');
-            return new inMemoryNoteAccessResult(false);
+            return new SimpleNoteAccessResult(false);
         }
     }
 
@@ -145,18 +141,22 @@ class SimpleNoteAccess implements NoteAccess {
             if (note.IsSuccess()) {
                 // replace these print statement with UI method calls
                 console.log('Successfully Retrieved Note');
-                return new inMemoryNoteAccessResultWithNote(true, note.GetResult());
+                return new SimpleNoteAccessResultWithNote(true, note.GetResult());
             } else {
                 console.log('Could Not Retrieve Note');
-                return new inMemoryNoteAccessResultWithNote(false, null);
+                return new SimpleNoteAccessResultWithNote(false, null);
             }
         } else {
             console.log('Note With That Name Does Not Exist');
-            return new inMemoryNoteAccessResultWithNote(false, null);
+            return new SimpleNoteAccessResultWithNote(false, null);
         }
     }
+}
 
-    class User {
-        
+class User {
+    name: string;
+
+    constructor(name: string) {
+        this.name = name;
     }
 }
