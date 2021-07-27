@@ -3,8 +3,8 @@ interface DataStore {
     Save(note: Note): DataStoreResult;
     Delete(id: string): DataStoreResult;
     Get(id: string): DataStoreResultWithData<Note | null>;
-    Create(id: string, author: string): DataStoreResult;
-    GetAll(): Array<string>;
+    Create(id: string): DataStoreResult;
+    GetAll(): DataStoreResultWithData<Array<string> | null>;
 }
 
 interface DataStoreProvider {
@@ -19,7 +19,7 @@ interface DataStoreResultWithData<T> extends DataStoreResult {
     GetResult(): T;
 }
 
-class inMemoryDataStoreResult implements DataStoreResult {
+class SimpleDataStoreResult implements DataStoreResult {
     Success: boolean;
 
     constructor(success: boolean) {
@@ -31,7 +31,7 @@ class inMemoryDataStoreResult implements DataStoreResult {
     }
 }
 
-class inMemoryDataStoreResultWithData<T> implements DataStoreResultWithData<T> {
+class SimpleDataStoreResultWithData<T> implements DataStoreResultWithData<T> {
     Success: boolean;
     Result: T;
 
@@ -58,123 +58,57 @@ class SimpleDataStoreProvider implements DataStoreProvider {
 
 // Simple data store class that uses a dictionary as the database
 class SimpleDataStore implements DataStore {
-    DataStore: {[iD: string]: Note} = {};
+    DataStore: {[id: string]: Note} = {};
 
     Save(note: Note): DataStoreResult {
-        this.DataStore[note.iD] = note;
-        return new inMemoryDataStoreResult(true);
+        this.DataStore[note.id] = note;
+        return new SimpleDataStoreResult(true);
     }
 
     Delete(id: string): DataStoreResult {
         if (id in this.DataStore) {
             delete this.DataStore[id];
-            return new inMemoryDataStoreResult(true);
+            return new SimpleDataStoreResult(true);
         } else {
-            return new inMemoryDataStoreResult(false);
+            return new SimpleDataStoreResult(false);
         }
     }
 
     Get(id: string): DataStoreResultWithData<Note | null> {
         if (id in this.DataStore) {
             const note = this.DataStore[id];
-            return new inMemoryDataStoreResultWithData(true, note);
+            return new SimpleDataStoreResultWithData(true, note);
         } else {
-            return new inMemoryDataStoreResultWithData(false, null);
+            return new SimpleDataStoreResultWithData(false, null);
         }
     }
 
-    Create(id: string, author: string): DataStoreResult {
-        this.DataStore[id] = new Note(id, author);
-        return new inMemoryDataStoreResult(true);
+    Create(id: string): DataStoreResult {
+        this.DataStore[id] = new Note(id);
+        return new SimpleDataStoreResult(true);
     }
 
-    GetAll(): Array<string> {
+    GetAll(): DataStoreResultWithData<Array<string> | null> {
         const notes = Object.keys(this.DataStore)
-        return notes;
+        return new SimpleDataStoreResultWithData(true, notes);
     } 
 }
 
-
 // Simple note class which stores the name as iD and the content of note as note
-export class Note {
-    iD: string;
-    note: string;
-    author: string;
+class Note {
+    id: string;
+    content: string;
     tags: Array<string>;
 
-    constructor(iD: string, author: string) {
-        this.iD = iD;
-        this.note = "";
-        this.author = author;
+    constructor(id: string) {
+        this.id = id;
+        this.content = "";
         this.tags = [];
     }
 
-    edit(text: string): void {
-        this.note = text;
+    edit(content: string): void {
+        this.content = content;
     }
 } 
 
-// Test class using simple data store
-class Test {
-
-    TestCreate(): boolean {
-        const DataStoreProvider = new SimpleDataStoreProvider();
-        const Database = DataStoreProvider.Create();
-        Database.Create("Note_1", "Bob");
-        const id = "Note_1";
-        return id in Database.DataStore;
-    }
-
-    TestSave(): void {
-        const DataStoreProvider = new SimpleDataStoreProvider();
-        const Database = DataStoreProvider.Create();
-        const note = new Note("Note_1", "Bob");
-        Database.Create(note.iD, note.author);
-        note.edit("Hello World!");
-        Database.Save(note);
-        const note2 = Database.DataStore[note.iD];
-        console.log(note2.note);
-    }
-
-    TestDelete(): void {
-        const DataStoreProvider = new SimpleDataStoreProvider();
-        const Database = DataStoreProvider.Create();
-        Database.Create("Note_1", "Bob");
-        const id = "Note_1";
-        console.log(id in Database.DataStore);
-        Database.Delete(id);
-        console.log(id in Database.DataStore);
-    }
-
-    TestGet(): Note | null {
-        const DataStoreProvider = new SimpleDataStoreProvider();
-        const Database = DataStoreProvider.Create();
-        const note = new Note("Note_1", "Jack");
-        Database.Create(note.iD, note.author);
-        note.edit("Hello World!");
-        Database.Save(note);
-        const result = Database.Get(note.iD);
-        return result.GetResult();
-    }
-
-    TestGetAll(): Array<string> {
-        const DataStoreProvider = new SimpleDataStoreProvider();
-        const Database = DataStoreProvider.Create();
-        const note = new Note("Note_1", "Bill");
-        const note2 = new Note("Note_2", "Steve");
-        Database.Create(note.iD, note.author);
-        Database.Create(note2.iD, note2.author);
-        return Database.GetAll();
-    }
-}
-
-/* Tests
-let t: Test = new Test();
-t.TestCreate();
-t.TestSave();
-t.TestDelete();
-t.TestGet();
-t.TestGetAll();
-*/
-
-export {}
+export {SimpleDataStoreProvider, Note}

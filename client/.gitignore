@@ -10,6 +10,7 @@
 
 #database
 noteAppDB.db
+note_storage.js
 
 # production
 /build
