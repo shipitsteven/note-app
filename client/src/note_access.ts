@@ -6,6 +6,7 @@ interface NoteAccess {
     Save(note: Note): NoteAccessResult;
     Delete(id: string): NoteAccessResult;
     Get(id: string): NoteAccessResultWithNote<Note | null>;
+    AddTag(id: string, tag: string): NoteAccessResult;
 }
 
 interface NoteAccessResult {
@@ -141,6 +142,25 @@ class SimpleNoteAccess implements NoteAccess {
         } else {
             console.log('Note With That Name Does Not Exist');
             return new SimpleNoteAccessResultWithNote(false, null);
+        }
+    }
+
+    AddTag(id: string, tag: string): NoteAccessResult {
+        if (this.ValidateName(id).IsSuccess()) {
+            const noteResult = this.SimpleDataStore.Get(id);
+            if (noteResult.IsSuccess()) {
+                const note = noteResult.GetResult()!;
+                note.tags.push(tag);
+                // replace these print statement with UI method calls
+                console.log('Successfully Added Tag');
+                return new SimpleNoteAccessResult(true);
+            } else {
+                console.log('Could Not Added Tag');
+                return new SimpleNoteAccessResult(false);
+            } 
+        } else {
+            console.log('Note Does Not Exist');
+            return new SimpleNoteAccessResult(false);
         }
     }
 }
