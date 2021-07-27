@@ -1,5 +1,6 @@
-import { Note, SimpleDataStore } from './note_storage';
+import { Note, SimpleDataStoreProvider } from './note_storage';
 
+// Business logic interface
 interface NoteAccess {
     Create(id: string): NoteAccessResult;
     Save(note: Note): NoteAccessResult;
@@ -47,6 +48,10 @@ class SimpleNoteAccessResultWithNote<T> implements NoteAccessResultWithNote<T> {
 }
 
 class SimpleNoteAccess implements NoteAccess {
+
+    DataStoreProvider = new SimpleDataStoreProvider();
+    SimpleDataStore = this.DataStoreProvider.Create();
+
     ValidateText(text: string): NoteAccessResult {
         if (text) {
             return new SimpleNoteAccessResult(true);
@@ -56,7 +61,7 @@ class SimpleNoteAccess implements NoteAccess {
     }
 
     ValidateName(name: string): NoteAccessResult {
-        if (name in SimpleDataStore.GetAll()) {
+        if (name in this.SimpleDataStore.GetAll()) {
             return new SimpleNoteAccessResult(false);
         } else {
             return new SimpleNoteAccessResult(true);
@@ -64,24 +69,16 @@ class SimpleNoteAccess implements NoteAccess {
     }
 
     ValidateNote(note: Note): NoteAccessResult {
-        if (Note.id in SimpleDataStore.GetAll()) {
+        if (note.id in this.SimpleDataStore.GetAll()) {
             return new SimpleNoteAccessResult(true);
         } else {
             return new SimpleNoteAccessResult(false);
         }
     }
 
-    ValidateUser(user: User): NoteAccessResult {
-        if (user) {
-            return new SimpleNoteAccessResult(true);
-        } else {
-            return new SimpleNoteAccessResult(false);
-        }    
-    }
-
     Create(id: string): NoteAccessResult {
         if (this.ValidateName(id).IsSuccess()) {
-            const res = SimpleDataStore.Create(id, User.name);
+            const res = this.SimpleDataStore.Create(id);
             if (res.IsSuccess()) {
                 //replace these print statements with UI method calls
                 console.log('Successfully Created Note');
@@ -97,19 +94,14 @@ class SimpleNoteAccess implements NoteAccess {
     }
 
     Save(note: Note): NoteAccessResult {
-        if (this.ValidateText(note.note).IsSuccess()) {
-            if (this.ValidateUser(note.author).IsSuccess()) {
-                const res = SimpleDataStore.Save(note);
-                if (res.IsSuccess()) {
-                    // replace these print statements with UI method calls
-                    console.log('Successfully Saved Note');
-                    return new SimpleNoteAccessResult(true);
-                } else {
-                    console.log('Could Not Save Note');
-                    return new SimpleNoteAccessResult(false);
-                }
+        if (this.ValidateText(note.content).IsSuccess()) {
+            const res = this.SimpleDataStore.Save(note);
+            if (res.IsSuccess()) {
+                // replace these print statements with UI method calls
+                console.log('Successfully Saved Note');
+                return new SimpleNoteAccessResult(true);
             } else {
-                console.log('Invalid User/Create Account');
+                console.log('Could Not Save Note');
                 return new SimpleNoteAccessResult(false);
             }
         } else {
@@ -120,7 +112,7 @@ class SimpleNoteAccess implements NoteAccess {
 
     Delete(id: string): NoteAccessResult {
         if (this.ValidateName(id).IsSuccess()) {
-            const res = SimpleDataStore.Delete(id);
+            const res = this.SimpleDataStore.Delete(id);
             if (res.IsSuccess()) {
                 // replace these print statement with UI method calls
                 console.log('Successfully Deleted Note');
@@ -137,7 +129,7 @@ class SimpleNoteAccess implements NoteAccess {
 
     Get(id: string): NoteAccessResultWithNote<Note | null> {
         if (this.ValidateName(id).IsSuccess()) {
-            const note: Note | null = SimpleDataStore.Get(id);
+            const note = this.SimpleDataStore.Get(id);
             if (note.IsSuccess()) {
                 // replace these print statement with UI method calls
                 console.log('Successfully Retrieved Note');
@@ -150,13 +142,5 @@ class SimpleNoteAccess implements NoteAccess {
             console.log('Note With That Name Does Not Exist');
             return new SimpleNoteAccessResultWithNote(false, null);
         }
-    }
-}
-
-class User {
-    name: string;
-
-    constructor(name: string) {
-        this.name = name;
     }
 }
