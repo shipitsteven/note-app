@@ -1,4 +1,4 @@
-import { Note, SimpleDataStoreProvider } from './note_storage';
+import { SimpleDataStoreProvider } from './note_storage';
 
 // Business logic interface
 interface NoteAccess {
@@ -164,3 +164,22 @@ class SimpleNoteAccess implements NoteAccess {
         }
     }
 }
+
+// Simple note class which stores the name as iD and the content of note as note
+class Note {
+    id: string;
+    content: string;
+    tags: Array<string>;
+
+    constructor(id: string) {
+        this.id = id;
+        this.content = "";
+        this.tags = [];
+    }
+
+    edit(content: string): void {
+        this.content = content;
+    }
+} 
+
+export { Note }

@@ -1,3 +1,5 @@
+import { Note } from './note_access';
+
 // Datastore interface that implements 5 basic features
 interface DataStore {
     Save(note: Note): DataStoreResult;
@@ -94,21 +96,4 @@ class SimpleDataStore implements DataStore {
     } 
 }
 
-// Simple note class which stores the name as iD and the content of note as note
-class Note {
-    id: string;
-    content: string;
-    tags: Array<string>;
-
-    constructor(id: string) {
-        this.id = id;
-        this.content = "";
-        this.tags = [];
-    }
-
-    edit(content: string): void {
-        this.content = content;
-    }
-} 
-
-export {SimpleDataStoreProvider, Note}
+export {SimpleDataStoreProvider}
