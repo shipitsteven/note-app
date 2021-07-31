@@ -25,9 +25,14 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
-import MailIcon from '@material-ui/icons/Mail'
-import { fakeNotes } from '../mock/fakeNotes'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import LabelRoundedIcon from '@material-ui/icons/LabelTwoTone'
+import Chip from '@material-ui/core/Chip'
+import Avatar from '@material-ui/core/Avatar'
+import { fakeNotes, fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
 
 const drawerWidth = 380
@@ -132,6 +137,16 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('md')]: {
         width: '20ch',
       },
+    },
+    heading: {
+      fontSize: theme.typography.pxToRem(15),
+      fontWeight: theme.typography.fontWeightRegular,
+      marginLeft: theme.spacing(2),
+    },
+    flexWrapDiv: {
+      display: 'flex',
+      alignItems: 'center',
+      flexWrap: 'wrap',
     },
   })
 )
@@ -260,16 +275,43 @@ export default function NotesDrawer(props: Props): JSX.Element {
           )}
         </List>
         <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
+
+        {open ? (
+          <Accordion className="flexWrapDiv">
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <div className={classes.flexWrapDiv}>
+                <Avatar style={{ color: '#FF9636', background: 'transparent' }}>
+                  <LabelRoundedIcon />
+                </Avatar>
+                <Typography className={classes.heading}> Tags</Typography>
+              </div>
+            </AccordionSummary>
+            <AccordionDetails>
+              <div className={classes.flexWrapDiv}>
+                {fakeTags.map(({ name, color }) => (
+                  <Chip
+                    clickable
+                    label={name}
+                    key={name}
+                    style={{
+                      backgroundColor: color,
+                      margin: '0.25em',
+                    }}
+                    // TODO: add on click handler
+                  />
+                ))}
+              </div>
+            </AccordionDetails>
+          </Accordion>
+        ) : (
+          <ListItem>
+            <LabelRoundedIcon style={{ color: '#FF9636' }} />
+          </ListItem>
+        )}
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
