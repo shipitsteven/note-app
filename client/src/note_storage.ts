@@ -1,11 +1,17 @@
 import { Note } from './note_access';
+import fs from 'fs';
+import path from 'path';
+const NOTE_DIR = './notes';
+
+if (!fs.existsSync(NOTE_DIR)) {
+    fs.mkdirSync(NOTE_DIR);
+}
 
 // Datastore interface that implements 5 basic features
 interface DataStore {
     Save(note: Note): DataStoreResult;
     Delete(id: string): DataStoreResult;
     Get(id: string): DataStoreResultWithData<Note | null>;
-    Create(id: string): DataStoreResult;
     GetAll(): DataStoreResultWithData<Array<string> | null>;
 }
 
@@ -85,15 +91,37 @@ class SimpleDataStore implements DataStore {
         }
     }
 
-    Create(id: string): DataStoreResult {
-        this.DataStore[id] = new Note(id);
-        return new SimpleDataStoreResult(true);
-    }
-
     GetAll(): DataStoreResultWithData<Array<string> | null> {
         const notes = Object.keys(this.DataStore)
         return new SimpleDataStoreResultWithData(true, notes);
     } 
+}
+
+class FileStore implements DataStore {
+    Save(note: Note): DataStoreResult {
+        const file = note.id + '.txt';
+        fs.writeFile(path.join(NOTE_DIR, file), note.content, function(err) {
+            if (err) {
+                return new SimpleDataStoreResult(false);
+            }
+            console.log("File created!");
+        });
+        return new SimpleDataStoreResult(true);
+    }
+
+    Delete(id: String): DataStoreResult {
+        const file = id + '.txt';
+        const res = path.join(NOTE_DIR, file);
+        fs.unlink(res, function(err) {
+            if (err) {
+                return new SimpleDataStoreResult(false);
+            }
+            console.log("File deleted!");
+        });
+        return new SimpleDataStoreResult(true);
+    }
+
+    
 }
 
 export {SimpleDataStoreProvider}
