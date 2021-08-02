@@ -1,10 +1,10 @@
 import { Note } from './note_access';
 import fs from 'fs';
 import path from 'path';
-const NOTE_DIR = './notes';
+const NOTES_DIR = './notes';
 
-if (!fs.existsSync(NOTE_DIR)) {
-    fs.mkdirSync(NOTE_DIR);
+if (!fs.existsSync(NOTES_DIR)) {
+    fs.mkdirSync(NOTES_DIR);
 }
 
 // Datastore interface that implements 5 basic features
@@ -97,10 +97,16 @@ class SimpleDataStore implements DataStore {
     } 
 }
 
+class FileStoreProvider implements DataStoreProvider {
+    Create(): FileStore {
+        return new FileStore();
+    }
+}
+
 class FileStore implements DataStore {
     Save(note: Note): DataStoreResult {
         const file = note.id + '.txt';
-        fs.writeFile(path.join(NOTE_DIR, file), note.content, function(err) {
+        fs.writeFile(path.join(NOTES_DIR, file), note.content, function(err) {
             if (err) {
                 return new SimpleDataStoreResult(false);
             }
@@ -111,7 +117,7 @@ class FileStore implements DataStore {
 
     Delete(id: String): DataStoreResult {
         const file = id + '.txt';
-        const res = path.join(NOTE_DIR, file);
+        const res = path.join(NOTES_DIR, file);
         fs.unlink(res, function(err) {
             if (err) {
                 return new SimpleDataStoreResult(false);
@@ -121,7 +127,23 @@ class FileStore implements DataStore {
         return new SimpleDataStoreResult(true);
     }
 
-    
+    Get(id: String): DataStoreResultWithData<Note | null> {
+        const file = id + '.txt';
+        const res = path.join(NOTES_DIR, file);
+        if (!fs.existsSync(res)) {
+            return new SimpleDataStoreResultWithData(false, null);
+        } else {
+            const data = fs.readFileSync(res);
+            const note = new Note(id);
+            note.edit(data.toString);
+            return new SimpleDataStoreResultWithData(true, note);
+        }
+    }
+
+    GetAll(): DataStoreResultWithData<Array<string> | null> {
+        const notes = fs.readdirSync(NOTES_DIR);
+        return new SimpleDataStoreResultWithData(true, notes);
+    }
 }
 
-export {SimpleDataStoreProvider}
+export {SimpleDataStoreProvider, FileStoreProvider}
