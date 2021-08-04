@@ -161,6 +161,11 @@ export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
+  const [searchKey, setSearchKey]=React.useState('')
+
+  const handleChipOnClick = (name:string)=>{
+    setSearchKey('#tag ' + name)
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -204,7 +209,8 @@ export default function NotesDrawer(props: Props): JSX.Element {
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
-              inputProps={{ 'aria-label': 'search' }}
+              inputProps={{ 'aria-label': 'Search' }}
+              value = {searchKey}
             />
           </div>
           <Button
@@ -294,7 +300,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               <div className={classes.flexWrapDiv}>
                 {fakeTags.map(({ name, color }) => (
                   <Chip
-                    clickable
+                    onClick={() => handleChipOnClick(name)}
                     label={name}
                     key={name}
                     style={{
