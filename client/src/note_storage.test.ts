@@ -1,56 +1,56 @@
-import {SimpleDataStoreProvider, Note} from './note_storage';
+import {FileStoreProvider, Note} from './note_storage';
+import path from 'path';
+import fs from 'fs';
 
-test('tests creating note adds id to datastore', () => {
-    const DataStoreProvider = new SimpleDataStoreProvider();
-    const Database = DataStoreProvider.Create();
-    Database.Create("Note_1");
-    const id = "Note_1";
-    expect(id in Database.DataStore).toBe(true);
-})
+const NOTES_DIR = './notes';
 
-test('tests saving a note to the datastore', () => {
-    const DataStoreProvider = new SimpleDataStoreProvider();
-    const Database = DataStoreProvider.Create();
-    const note = new Note("Note_1");
-    Database.Create(note.id);
-    note.edit("Hello World!");
-    Database.Save(note);
-    const note2 = Database.DataStore[note.id];
-    expect(note2.content).toEqual('Hello World!');
-})
-
-test('tests deleting a note from the datastore', () => {
-    const DataStoreProvider = new SimpleDataStoreProvider();
-    const Database = DataStoreProvider.Create();
-    Database.Create("Note_1");
-    const id = "Note_1";
-    expect(id in Database.DataStore).toBe(true);
-    Database.Delete(id);
-    expect(id in Database.DataStore).toBe(false);
-})
-
-test('tests getting a note from the datastore', () => {
-    const DataStoreProvider = new SimpleDataStoreProvider();
-    const Database = DataStoreProvider.Create();
-    const note = new Note("Note_1");
-    Database.Create(note.id);
-    note.edit("Hello World!");
-    Database.Save(note);
-    const result = Database.Get(note.id).GetResult()!;
-    expect(result).toBeInstanceOf(Note);
-    expect(result.content).toEqual('Hello World!');
+test('tests saving note to file system', () => {
+    const DataStoreProvider = new FileStoreProvider();
+    const FileStore = DataStoreProvider.Create();
+    const note = new Note('hello', '');
+    const id = 'hello.txt';
+    const file = path.join(NOTES_DIR, id);
+    expect(fs.existsSync(file)).toBe(false);
+    FileStore.Save(note);
+    expect(fs.existsSync(file)).toBe(true);
+    fs.unlinkSync(file);
 })
 
 test('tests getting a list of all notes from the datastore', () => {
-    const DataStoreProvider = new SimpleDataStoreProvider();
+    const DataStoreProvider = new FileStoreProvider();
     const Database = DataStoreProvider.Create();
-    const note = new Note("Note_1");
-    const note2 = new Note("Note_2");
-    Database.Create(note.id);
-    Database.Create(note2.id);
-    let keys = ['Note_1', 'Note_2'];
+    const note = new Note("foo", "");
+    const note2 = new Note("bar", "");
+    Database.Save(note);
+    Database.Save(note2);
+    let keys = ['bar.txt', 'foo.txt'];
     const result = Database.GetAll().GetResult()!;
     expect(result).toMatchObject(keys);
+    fs.unlinkSync(path.join(NOTES_DIR, 'bar.txt'));
+    fs.unlinkSync(path.join(NOTES_DIR, 'foo.txt'));
+})
+
+test('tests deleting a note from the file system', () => {
+    const DataStoreProvider = new FileStoreProvider();
+    const FileStore = DataStoreProvider.Create();
+    const note = new Note('hello', '');
+    const id = "hello.txt";
+    const file = path.join(NOTES_DIR, id);
+    FileStore.Save(note);
+    expect(fs.existsSync(file)).toBe(true);
+    FileStore.Delete(id);
+    expect(fs.existsSync(file)).toBe(false);
+})
+
+test('tests getting a note from the datastore', () => {
+    const DataStoreProvider = new FileStoreProvider();
+    const FileStore = DataStoreProvider.Create();
+    const note = new Note('bob', 'My name is Bob.');
+    FileStore.Save(note);
+    const result = FileStore.Get('bob').GetResult()!;
+    expect(result).toBeInstanceOf(Note);
+    expect(result.content).toEqual('My name is Bob.');
+    fs.unlinkSync(path.join(NOTES_DIR, 'bob.txt'));
 })
 
 export {}

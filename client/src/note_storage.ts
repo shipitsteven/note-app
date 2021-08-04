@@ -1,4 +1,3 @@
-import { Note } from './note_access';
 import fs from 'fs';
 import path from 'path';
 const NOTES_DIR = './notes';
@@ -58,13 +57,14 @@ class SimpleDataStoreResultWithData<T> implements DataStoreResultWithData<T> {
     }
 }
 
+/*
 class SimpleDataStoreProvider implements DataStoreProvider {
     Create(): SimpleDataStore {
         return new SimpleDataStore();
     }
 }
 
-// Simple data store class that uses a dictionary as the database
+
 class SimpleDataStore implements DataStore {
     DataStore: {[id: string]: Note} = {};
 
@@ -96,6 +96,7 @@ class SimpleDataStore implements DataStore {
         return new SimpleDataStoreResultWithData(true, notes);
     } 
 }
+**/
 
 class FileStoreProvider implements DataStoreProvider {
     Create(): FileStore {
@@ -106,36 +107,25 @@ class FileStoreProvider implements DataStoreProvider {
 class FileStore implements DataStore {
     Save(note: Note): DataStoreResult {
         const file = note.id + '.txt';
-        fs.writeFile(path.join(NOTES_DIR, file), note.content, function(err) {
-            if (err) {
-                return new SimpleDataStoreResult(false);
-            }
-            console.log("File created!");
-        });
+        fs.writeFileSync(path.join(NOTES_DIR, file), note.content);
         return new SimpleDataStoreResult(true);
     }
 
-    Delete(id: String): DataStoreResult {
-        const file = id + '.txt';
+    Delete(id: string): DataStoreResult {
+        const file = id;
         const res = path.join(NOTES_DIR, file);
-        fs.unlink(res, function(err) {
-            if (err) {
-                return new SimpleDataStoreResult(false);
-            }
-            console.log("File deleted!");
-        });
+        fs.unlinkSync(res);
         return new SimpleDataStoreResult(true);
     }
 
-    Get(id: String): DataStoreResultWithData<Note | null> {
+    Get(id: string): DataStoreResultWithData<Note | null> {
         const file = id + '.txt';
         const res = path.join(NOTES_DIR, file);
         if (!fs.existsSync(res)) {
             return new SimpleDataStoreResultWithData(false, null);
         } else {
-            const data = fs.readFileSync(res);
-            const note = new Note(id);
-            note.edit(data.toString);
+            const data = fs.readFileSync(res, 'utf8');
+            const note = new Note(id, data);
             return new SimpleDataStoreResultWithData(true, note);
         }
     }
@@ -146,4 +136,20 @@ class FileStore implements DataStore {
     }
 }
 
-export {SimpleDataStoreProvider, FileStoreProvider}
+class Note {
+    id: string;
+    content: string;
+    tags: Array<string>;
+
+    constructor(id: string, content: string) {
+        this.id = id;
+        this.content = content;
+        this.tags = [];
+    }
+
+    edit(content: string): void {
+        this.content = content;
+    }
+} 
+
+export {Note, FileStoreProvider}
