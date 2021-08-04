@@ -57,47 +57,6 @@ class SimpleDataStoreResultWithData<T> implements DataStoreResultWithData<T> {
     }
 }
 
-/*
-class SimpleDataStoreProvider implements DataStoreProvider {
-    Create(): SimpleDataStore {
-        return new SimpleDataStore();
-    }
-}
-
-
-class SimpleDataStore implements DataStore {
-    DataStore: {[id: string]: Note} = {};
-
-    Save(note: Note): DataStoreResult {
-        this.DataStore[note.id] = note;
-        return new SimpleDataStoreResult(true);
-    }
-
-    Delete(id: string): DataStoreResult {
-        if (id in this.DataStore) {
-            delete this.DataStore[id];
-            return new SimpleDataStoreResult(true);
-        } else {
-            return new SimpleDataStoreResult(false);
-        }
-    }
-
-    Get(id: string): DataStoreResultWithData<Note | null> {
-        if (id in this.DataStore) {
-            const note = this.DataStore[id];
-            return new SimpleDataStoreResultWithData(true, note);
-        } else {
-            return new SimpleDataStoreResultWithData(false, null);
-        }
-    }
-
-    GetAll(): DataStoreResultWithData<Array<string> | null> {
-        const notes = Object.keys(this.DataStore)
-        return new SimpleDataStoreResultWithData(true, notes);
-    } 
-}
-**/
-
 class FileStoreProvider implements DataStoreProvider {
     Create(): FileStore {
         return new FileStore();
