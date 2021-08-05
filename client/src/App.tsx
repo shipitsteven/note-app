@@ -3,11 +3,11 @@ import './App.css'
 import { StateContainer } from './components/StateContainer'
 
 function App(): React.ReactElement<any> {
-    return (
-        <div className="App">
-            <StateContainer />
-        </div>
-    )
+  return (
+    <div className="App">
+      <StateContainer />
+    </div>
+  )
 }
 
 export default App
