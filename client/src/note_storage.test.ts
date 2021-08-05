@@ -23,7 +23,7 @@ test('tests getting a list of all notes from the datastore', () => {
     const note2 = new Note("bar", "");
     Database.Save(note);
     Database.Save(note2);
-    let keys = ['bar.txt', 'foo.txt'];
+    const keys = ['bar.txt', 'foo.txt'];
     const result = Database.GetAll().GetResult()!;
     expect(result).toMatchObject(keys);
     fs.unlinkSync(path.join(NOTES_DIR, 'bar.txt'));
