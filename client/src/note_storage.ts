@@ -1,10 +1,17 @@
+import fs from 'fs';
+import path from 'path';
+const NOTES_DIR = './notes';
+
+if (!fs.existsSync(NOTES_DIR)) {
+    fs.mkdirSync(NOTES_DIR);
+}
+
 // Datastore interface that implements 5 basic features
 interface DataStore {
     Save(note: Note): DataStoreResult;
     Delete(id: string): DataStoreResult;
     Get(id: string): DataStoreResultWithData<Note | null>;
-    Create(id: string): DataStoreResult;
-    GetAll(): Array<string>;
+    GetAll(): DataStoreResultWithData<Array<string> | null>;
 }
 
 interface DataStoreProvider {
@@ -19,7 +26,7 @@ interface DataStoreResultWithData<T> extends DataStoreResult {
     GetResult(): T;
 }
 
-class inMemoryDataStoreResult implements DataStoreResult {
+class SimpleDataStoreResult implements DataStoreResult {
     Success: boolean;
 
     constructor(success: boolean) {
@@ -31,7 +38,7 @@ class inMemoryDataStoreResult implements DataStoreResult {
     }
 }
 
-class inMemoryDataStoreResultWithData<T> implements DataStoreResultWithData<T> {
+class SimpleDataStoreResultWithData<T> implements DataStoreResultWithData<T> {
     Success: boolean;
     Result: T;
 
@@ -50,116 +57,58 @@ class inMemoryDataStoreResultWithData<T> implements DataStoreResultWithData<T> {
     }
 }
 
-// Simple data store class that uses a dictionary as the database
-class SimpleDataStore implements DataStore {
-    DataStore: {[iD: string]: Note} = {};
+class FileStoreProvider implements DataStoreProvider {
+    Create(): FileStore {
+        return new FileStore();
+    }
+}
 
+class FileStore implements DataStore {
     Save(note: Note): DataStoreResult {
-        this.DataStore[note.iD] = note;
-        return new inMemoryDataStoreResult(true);
+        const file = note.id + '.txt';
+        fs.writeFileSync(path.join(NOTES_DIR, file), note.content);
+        return new SimpleDataStoreResult(true);
     }
 
     Delete(id: string): DataStoreResult {
-        if (id in this.DataStore) {
-            delete this.DataStore[id];
-            return new inMemoryDataStoreResult(true);
-        } else {
-            return new inMemoryDataStoreResult(false);
-        }
+        const file = id;
+        const res = path.join(NOTES_DIR, file);
+        fs.unlinkSync(res);
+        return new SimpleDataStoreResult(true);
     }
 
     Get(id: string): DataStoreResultWithData<Note | null> {
-        if (id in this.DataStore) {
-            let note = this.DataStore[id];
-            return new inMemoryDataStoreResultWithData(true, note);
+        const file = id + '.txt';
+        const res = path.join(NOTES_DIR, file);
+        if (!fs.existsSync(res)) {
+            return new SimpleDataStoreResultWithData(false, null);
         } else {
-            return new inMemoryDataStoreResultWithData(false, null);
+            const data = fs.readFileSync(res, 'utf8');
+            const note = new Note(id, data);
+            return new SimpleDataStoreResultWithData(true, note);
         }
     }
 
-    Create(id: string): DataStoreResult {
-        this.DataStore[id] = new Note(id);
-        return new inMemoryDataStoreResult(true);
+    GetAll(): DataStoreResultWithData<Array<string> | null> {
+        const notes = fs.readdirSync(NOTES_DIR);
+        return new SimpleDataStoreResultWithData(true, notes);
     }
-
-    GetAll(): Array<string> {
-        let notes = Object.keys(this.DataStore)
-        return notes;
-    } 
 }
 
-
-// Simple note class which stores the name as iD and the content of note as note
 class Note {
-    iD: string;
-    note: string;
+    id: string;
+    content: string;
+    tags: Array<string>;
 
-    constructor(iD: string) {
-        this.iD = iD;
-        this.note = "";
+    constructor(id: string, content: string) {
+        this.id = id;
+        this.content = content;
+        this.tags = [];
     }
 
-    edit(text: string) {
-        this.note = text;
+    edit(content: string): void {
+        this.content = content;
     }
 } 
 
-// Test class using simple data store
-class Test {
-
-    TestCreate(): boolean {
-        let Database = new SimpleDataStore();
-        Database.Create("Note_1");
-        let id = "Note_1";
-        return id in Database.DataStore;
-    }
-
-    TestSave(): void {
-        let Database = new SimpleDataStore();
-        let note = new Note("Note_1");
-        Database.Create(note.iD);
-        note.edit("Hello World!");
-        Database.Save(note);
-        let note2 = Database.DataStore[note.iD];
-        console.log(note2.note);
-    }
-
-    TestDelete(): void {
-        let Database = new SimpleDataStore();
-        Database.Create("Note_1");
-        let id = "Note_1";
-        console.log(id in Database.DataStore);
-        Database.Delete(id);
-        console.log(id in Database.DataStore);
-    }
-
-    TestGet(): Note | null {
-        let Database = new SimpleDataStore();
-        let note = new Note("Note_1");
-        Database.Create(note.iD);
-        note.edit("Hello World!");
-        Database.Save(note);
-        let result = Database.Get(note.iD);
-        return result.GetResult();
-    }
-
-    TestGetAll(): Array<string> {
-        let Database = new SimpleDataStore();
-        let note = new Note("Note_1");
-        let note2 = new Note("Note_2");
-        Database.Create(note.iD);
-        Database.Create(note2.iD);
-        return Database.GetAll();
-    }
-}
-
-/* Tests
-let t: Test = new Test();
-t.TestCreate();
-t.TestSave();
-t.TestDelete();
-t.TestGet();
-t.TestGetAll();
-*/
-
-export {}
+export {Note, FileStoreProvider}
