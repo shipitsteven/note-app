@@ -34,6 +34,7 @@ import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
 import { fakeNotes, fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
+import {Note, FileStoreProvider} from '../note_storage'
 
 const drawerWidth = 380
 
@@ -154,6 +155,7 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
   children: React.ReactElement<any>
   preview: boolean
+  value: string
   handlePreview: Dispatch<SetStateAction<boolean>>
 }
 
@@ -229,6 +231,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
             disableElevation
             onClick={() => {
               // TODO: add save function
+              const DataStoreProvider = new FileStoreProvider();
+              const FileStore = DataStoreProvider.Create();
+              const note = new Note('hello', props.value);
+              FileStore.Save(note);
               console.log('save button click')
             }}
             style={{
