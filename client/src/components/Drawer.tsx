@@ -161,9 +161,9 @@ export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
-  const [searchKey, setSearchKey]=React.useState('')
+  const [searchKey, setSearchKey] = React.useState('')
 
-  const handleChipOnClick = (name:string)=>{
+  const handleChipOnClick = (name: string) => {
     setSearchKey('#tag ' + name)
   }
 
@@ -210,7 +210,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'Search' }}
-              value = {searchKey}
+              value={searchKey}
             />
           </div>
           <Button
@@ -222,6 +222,22 @@ export default function NotesDrawer(props: Props): JSX.Element {
             }}
           >
             Toggle Preview
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            onClick={() => {
+              // TODO: add save function
+              console.log('save button click')
+            }}
+            style={{
+              marginLeft: theme.spacing(2),
+              backgroundColor: theme.palette.common.white,
+              color: theme.palette.common.black,
+            }}
+          >
+            Save
           </Button>
         </Toolbar>
       </AppBar>
