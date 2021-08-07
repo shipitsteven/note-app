@@ -24,6 +24,7 @@ interface TreeNode {
   children: [TreeNode]
 }
 
+// NEXT: each file should be an active link, so user can open the selected note
 const renderTree = (nodes: TreeNode) => (
   <TreeItem key={nodes.name} nodeId={nodes.name} label={nodes.name}>
     {Array.isArray(nodes.children)
