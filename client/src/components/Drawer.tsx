@@ -34,7 +34,8 @@ import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
 import { fakeNotes, fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
-import {Note, FileStoreProvider} from '../note_storage'
+import { Note, FileStoreProvider } from '../note_storage'
+import { FolderTree } from './FolderTree'
 
 const drawerWidth = 380
 
@@ -231,10 +232,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
             disableElevation
             onClick={() => {
               // TODO: add save function
-              const DataStoreProvider = new FileStoreProvider();
-              const FileStore = DataStoreProvider.Create();
-              const note = new Note('hello', props.value);
-              FileStore.Save(note);
+              const DataStoreProvider = new FileStoreProvider()
+              const FileStore = DataStoreProvider.Create()
+              const note = new Note('hello', props.value)
+              FileStore.Save(note)
               console.log('save button click')
             }}
             style={{
@@ -272,28 +273,31 @@ export default function NotesDrawer(props: Props): JSX.Element {
         <Divider />
         <List>
           {open ? (
-            fakeNotes.map(({ title, text, date }) => (
-              <>
-                <ListItem key={title}>
-                  <ListItemText
-                    primary={
-                      <>
-                        <Typography variant="subtitle1">{title}</Typography>
-                      </>
-                    }
-                    secondary={
-                      <React.Fragment>
-                        <Typography variant="caption">{date}</Typography>
-                        <Typography variant="body1" color="textPrimary">
-                          {text}
-                        </Typography>
-                      </React.Fragment>
-                    }
-                  />
-                </ListItem>
-                <Divider component="li" />
-              </>
-            ))
+            //   (
+            //   fakeNotes.map(({ title, text, date }) => (
+            //     <>
+            //       <ListItem key={title}>
+            //         <ListItemText
+            //           primary={
+            //             <>
+            //               <Typography variant="subtitle1">{title}</Typography>
+            //             </>
+            //           }
+            //           secondary={
+            //             <React.Fragment>
+            //               <Typography variant="caption">{date}</Typography>
+            //               <Typography variant="body1" color="textPrimary">
+            //                 {text}
+            //               </Typography>
+            //             </React.Fragment>
+            //           }
+            //         />
+            //       </ListItem>
+            //       <Divider component="li" />
+            //     </>
+            //   ))
+            // )
+            <FolderTree />
           ) : (
             <ListItem>
               <ListItemIcon>
