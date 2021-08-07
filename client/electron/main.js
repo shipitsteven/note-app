@@ -8,7 +8,11 @@ const createMainWindow = () => {
     show: false,
     backgroundColor: 'white',
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
+      enableRemoteModule: true,
+      contextIsolation: false,
+      nodeIntegrationInWorker: true,
+      nodeIntegrationInSubFrames: true
     },
   })
   const startURL = 'http://localhost:3000'

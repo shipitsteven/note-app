@@ -1,5 +1,5 @@
-import fs from 'fs';
 import path from 'path';
+const fs = window.require('fs');
 const NOTES_DIR = './notes';
 
 if (!fs.existsSync(NOTES_DIR)) {
@@ -65,7 +65,7 @@ class FileStoreProvider implements DataStoreProvider {
 
 class FileStore implements DataStore {
     Save(note: Note): DataStoreResult {
-        const file = note.id + '.txt';
+        const file = note.id + '.md';
         fs.writeFileSync(path.join(NOTES_DIR, file), note.content);
         return new SimpleDataStoreResult(true);
     }
@@ -78,7 +78,7 @@ class FileStore implements DataStore {
     }
 
     Get(id: string): DataStoreResultWithData<Note | null> {
-        const file = id + '.txt';
+        const file = id + '.md';
         const res = path.join(NOTES_DIR, file);
         if (!fs.existsSync(res)) {
             return new SimpleDataStoreResultWithData(false, null);
