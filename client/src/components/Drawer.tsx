@@ -35,6 +35,7 @@ import Avatar from '@material-ui/core/Avatar'
 import { fakeNotes, fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
 import {Note, FileStoreProvider} from '../note_storage'
+import {searchResult} from './LunrSearch'
 
 const drawerWidth = 380
 
@@ -169,6 +170,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
     setSearchKey('#tag ' + name)
   }
 
+  const handleChange = (key:string)=>{
+    setSearchKey(key)
+  }
+
   const handleDrawerOpen = () => {
     setOpen(true)
   }
@@ -203,7 +208,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <SearchIcon />
+              <SearchIcon onClick={() => searchResult(searchKey)}/>
             </div>
             <InputBase
               placeholder="Search…"
@@ -212,6 +217,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'Search' }}
+              onChange = {handleChange(searchKey)}
               value={searchKey}
             />
           </div>
