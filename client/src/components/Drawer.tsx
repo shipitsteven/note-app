@@ -24,7 +24,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
+// import ListItemText from '@material-ui/core/ListItemText'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
@@ -32,9 +32,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import LabelRoundedIcon from '@material-ui/icons/LabelTwoTone'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
-import { fakeNotes, fakeTags } from '../mock/fakeNotes'
+import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
-import {Note, FileStoreProvider} from '../note_storage'
+import { Note, FileStoreProvider } from '../note_storage'
+import { FolderTree } from './FolderTree'
 
 const drawerWidth = 380
 
@@ -231,10 +232,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
             disableElevation
             onClick={() => {
               // TODO: add save function
-              const DataStoreProvider = new FileStoreProvider();
-              const FileStore = DataStoreProvider.Create();
-              const note = new Note('hello', props.value);
-              FileStore.Save(note);
+              const DataStoreProvider = new FileStoreProvider()
+              const FileStore = DataStoreProvider.Create()
+              const note = new Note('hello', props.value)
+              FileStore.Save(note)
               console.log('save button click')
             }}
             style={{
@@ -272,28 +273,25 @@ export default function NotesDrawer(props: Props): JSX.Element {
         <Divider />
         <List>
           {open ? (
-            fakeNotes.map(({ title, text, date }) => (
-              <>
-                <ListItem key={title}>
-                  <ListItemText
-                    primary={
-                      <>
-                        <Typography variant="subtitle1">{title}</Typography>
-                      </>
-                    }
-                    secondary={
-                      <React.Fragment>
-                        <Typography variant="caption">{date}</Typography>
-                        <Typography variant="body1" color="textPrimary">
-                          {text}
-                        </Typography>
-                      </React.Fragment>
-                    }
-                  />
-                </ListItem>
-                <Divider component="li" />
-              </>
-            ))
+            <Accordion className="flexWrapDiv">
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <div className={classes.flexWrapDiv}>
+                  <Avatar
+                    style={{ color: '#189AB4', background: 'transparent' }}
+                  >
+                    <NoteIcon />
+                  </Avatar>
+                  <Typography className={classes.heading}> Notes</Typography>
+                </div>
+              </AccordionSummary>
+              <AccordionDetails>
+                <FolderTree />
+              </AccordionDetails>
+            </Accordion>
           ) : (
             <ListItem>
               <ListItemIcon>
