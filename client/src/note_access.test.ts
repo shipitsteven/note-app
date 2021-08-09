@@ -11,4 +11,6 @@ test('tests saving file to filesystem and checks for metadata creation', () => {
     const NoteAccess = NoteAccessProvider.Create();
     const note = new Note('hello', 'hi');
     NoteAccess.Save(note);
+    const note2 = new Note('foo', 'hello');
+    NoteAccess.Save(note2);
 })

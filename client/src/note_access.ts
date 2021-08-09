@@ -1,4 +1,5 @@
 import { Note, FileStoreProvider } from './note_storage';
+import { Note_metadata } from './note_metadata';
 import fs from 'fs';
 import path from 'path';
 const NOTES_DIR = './notes';
@@ -100,7 +101,8 @@ class SimpleNoteAccess implements NoteAccess {
         if (this.ValidateText(note.content).IsSuccess()) {
             const res = this.FileStore.Save(note);
             if (res.IsSuccess()) {
-                const data = JSON.stringify(note.id);
+                const note_data = new Note_metadata(note.id, note.tags);
+                const data = JSON.stringify(note_data);
                 fs.writeFileSync(metadata, data);
                 // replace these print statements with UI method calls
                 console.log('Successfully Saved Note');
