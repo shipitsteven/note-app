@@ -1,14 +1,17 @@
 import { Note, FileStoreProvider } from './note_storage';
 import { Note_metadata } from './note_metadata';
+import { SimpleNoteMetaDataProvider } from './metadata_create';
 import fs from 'fs';
 import path from 'path';
-const NOTES_DIR = './notes';
 const NOTE_APP_DIR = './.noteapp';
 const metadata = path.join(NOTE_APP_DIR, 'metadata.json');
 
 if (!fs.existsSync(NOTE_APP_DIR)) {
     fs.mkdirSync(NOTE_APP_DIR);
     fs.writeFileSync(metadata, '');
+    const MetaDataProvider = new SimpleNoteMetaDataProvider();
+    const DataStore = MetaDataProvider.Create();
+    DataStore.Create();
 }
 
 // Business logic interface
@@ -72,6 +75,8 @@ class SimpleNoteAccess implements NoteAccess {
 
     DataStoreProvider = new FileStoreProvider();
     FileStore = this.DataStoreProvider.Create();
+    MetaDataProvider = new SimpleNoteMetaDataProvider();
+    MetaDataStore = this.MetaDataProvider.Create();
 
     ValidateText(text: string): NoteAccessResult {
         if (text) {
@@ -101,9 +106,8 @@ class SimpleNoteAccess implements NoteAccess {
         if (this.ValidateText(note.content).IsSuccess()) {
             const res = this.FileStore.Save(note);
             if (res.IsSuccess()) {
-                const note_data = new Note_metadata(note.id, note.tags);
-                const data = JSON.stringify(note_data);
-                fs.writeFileSync(metadata, data);
+                const noteData = new Note_metadata(note.id, note.tags);
+                this.MetaDataStore.Add(noteData);
                 // replace these print statements with UI method calls
                 console.log('Successfully Saved Note');
                 return new SimpleNoteAccessResult(true);

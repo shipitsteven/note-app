@@ -13,4 +13,12 @@ test('tests saving file to filesystem and checks for metadata creation', () => {
     NoteAccess.Save(note);
     const note2 = new Note('foo', 'hello');
     NoteAccess.Save(note2);
+    const note3 = new Note('bar', 'bad');
+    NoteAccess.Save(note3);
+})
+
+test('tests deleting note from filesystem and checks fior metadata deletion', () => {
+    const NoteAccessProvider = new SimpleNotesProvider();
+    const NoteAccess = NoteAccessProvider.Create();
+    NoteAccess.Delete('22two8sdi7txvj8cnfcd19');
 })
