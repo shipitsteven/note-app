@@ -1,4 +1,6 @@
-# Hello World 
+# Hello World
+
 ## Write in Markdown, see preview
-**bold** _italic_ 
+
+**bold** _italic_
 Try typing markdown here
