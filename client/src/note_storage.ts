@@ -78,7 +78,7 @@ class FileStore implements DataStore {
     }
 
     Get(id: string): DataStoreResultWithData<Note | null> {
-        const file = id + '.md';
+        const file = id;
         const res = path.join(NOTES_DIR, file);
         if (!fs.existsSync(res)) {
             return new SimpleDataStoreResultWithData(false, null);

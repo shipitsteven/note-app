@@ -36,6 +36,7 @@ import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
 import { Note, FileStoreProvider } from '../note_storage'
 import { FolderTree } from './FolderTree'
+import {searchResult} from '../LunrSearch'
 
 const drawerWidth = 380
 
@@ -170,6 +171,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
     setSearchKey('#tag ' + name)
   }
 
+  const handleChange = (key:string)=>{
+    setSearchKey(key)
+  }
+
   const handleDrawerOpen = () => {
     setOpen(true)
   }
@@ -204,8 +209,8 @@ export default function NotesDrawer(props: Props): JSX.Element {
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <SearchIcon />
             </div>
+            <button onClick = {()=>{searchResult(searchKey)}}>search</button>
             <InputBase
               placeholder="Search…"
               classes={{
@@ -214,6 +219,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               }}
               inputProps={{ 'aria-label': 'Search' }}
               value={searchKey}
+              onChange={(event) => handleChange(event.target.value)}
             />
           </div>
           <Button
