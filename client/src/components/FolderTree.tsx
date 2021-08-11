@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React, { SetStateAction } from 'react'
 import TreeView from '@material-ui/lab/TreeView'
@@ -28,6 +29,7 @@ interface TreeNode {
 }
 interface Props {
   handleChange: Dispatch<SetStateAction<string>>
+  handleNoteId: Dispatch<SetStateAction<string>>
 }
 
 export const FolderTree: React.FC<Props> = (props) => {
@@ -60,8 +62,10 @@ export const FolderTree: React.FC<Props> = (props) => {
       const note = FileStore.Get(node.path)
       if (note.IsSuccess()) {
         const text = note.GetResult()?.content || ''
+        const id = note.GetResult()?.id || ''
         // eslint-disable-next-line react/prop-types
         props.handleChange(text)
+        props.handleNoteId(id)
       } else {
         alert('Something went wrong while retrieving notes :(')
       }
