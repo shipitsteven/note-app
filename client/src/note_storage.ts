@@ -79,11 +79,11 @@ class FileStore implements DataStore {
 
     Get(id: string): DataStoreResultWithData<Note | null> {
         const file = id;
-        const res = path.join(NOTES_DIR, file);
-        if (!fs.existsSync(res)) {
+        //const res = path.join(NOTES_DIR, file);
+        if (!fs.existsSync(id)) {
             return new SimpleDataStoreResultWithData(false, null);
         } else {
-            const data = fs.readFileSync(res, 'utf8');
+            const data = fs.readFileSync(id, 'utf8');
             const note = new Note(id, data);
             return new SimpleDataStoreResultWithData(true, note);
         }
@@ -96,7 +96,7 @@ class FileStore implements DataStore {
             files.forEach(f => {
               fs.statSync(f).isDirectory() && rreaddirSync(f, allFiles)
             })
-            return allFiles
+            return allFiles.filter(f=> !fs.statSync(f).isDirectory())
         }
         const notes = rreaddirSync(NOTES_DIR);
         return new SimpleDataStoreResultWithData(true, notes);
