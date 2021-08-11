@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Editable } from './Editable'
 import { Preview } from './Preview'
 import NotesDrawer from './Drawer'
@@ -10,10 +10,6 @@ export const StateContainer: React.FC = () => {
   const [noteId, setNoteId] = useState('')
 
   const [preview, setPreview] = useState(true)
-
-  useEffect(() => {
-    console.log(noteId)
-  }, [noteId])
 
   return (
     <>
