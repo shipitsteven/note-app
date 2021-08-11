@@ -9,7 +9,7 @@ if (!fs.existsSync(NOTES_DIR)) {
 
 // Datastore interface that implements 5 basic features
 interface DataStore {
-    Save(note: Note): DataStoreResult;
+    Save(id: string, content: string): DataStoreResult;
     Delete(id: string): DataStoreResult;
     Get(id: string): DataStoreResultWithData<Note | null>;
     GetAll(): DataStoreResultWithData<Array<string> | null>;
@@ -65,9 +65,8 @@ class FileStoreProvider implements DataStoreProvider {
 }
 
 class FileStore implements DataStore {
-    Save(note: Note): DataStoreResult {
-        const file = note.id + '.md';
-        fs.writeFileSync(path.join(NOTES_DIR, file), note.content);
+    Save(id: string, content: string): DataStoreResult {
+        fs.writeFileSync(id, content);
         return new SimpleDataStoreResult(true);
     }
 

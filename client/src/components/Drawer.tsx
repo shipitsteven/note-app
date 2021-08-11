@@ -155,9 +155,11 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
   children: React.ReactElement<any>
   preview: boolean
+  noteId: string
   value: string
   handlePreview: Dispatch<SetStateAction<boolean>>
   handleNoteChange: Dispatch<SetStateAction<string>>
+  handleNoteId: Dispatch<SetStateAction<string>>
 }
 
 export default function NotesDrawer(props: Props): JSX.Element {
@@ -234,9 +236,8 @@ export default function NotesDrawer(props: Props): JSX.Element {
               // TODO: add save function
               const DataStoreProvider = new FileStoreProvider()
               const FileStore = DataStoreProvider.Create()
-              const note = new Note('hello', props.value)
-              FileStore.Save(note)
-              console.log('save button click')
+              // const note = new Note('hello', props.value)
+              FileStore.Save(props.noteId, props.value)
             }}
             style={{
               marginLeft: theme.spacing(2),
@@ -289,7 +290,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
                 </div>
               </AccordionSummary>
               <AccordionDetails>
-                <FolderTree handleChange={props.handleNoteChange} />
+                <FolderTree
+                  handleChange={props.handleNoteChange}
+                  handleNoteId={props.handleNoteId}
+                />
               </AccordionDetails>
             </Accordion>
           ) : (

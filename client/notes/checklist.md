@@ -1,6 +1,6 @@
-- [] banana
-- [] apple
-- [] cherry
-- [] orange
-- [] pear
-- [] kiwi
+- [ ] banana
+- [ ] apple
+- [ ] cherry
+- [ ] orange
+- [ ] pear
+- [ ] kiwi
