@@ -90,7 +90,15 @@ class FileStore implements DataStore {
     }
 
     GetAll(): DataStoreResultWithData<Array<string> | null> {
-        const notes = fs.readdirSync(NOTES_DIR);
+        function rreaddirSync (dir: string, allFiles: string[] = []): string[] {
+            const files = fs.readdirSync(dir).map(f => path.join(dir, f))
+            allFiles.push(...files)
+            files.forEach(f => {
+              fs.statSync(f).isDirectory() && rreaddirSync(f, allFiles)
+            })
+            return allFiles
+        }
+        const notes = rreaddirSync(NOTES_DIR);
         return new SimpleDataStoreResultWithData(true, notes);
     }
 }
