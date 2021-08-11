@@ -1,7 +1,6 @@
 import {Note} from './note_storage';
 import {SimpleNotesProvider} from './note_access';
 import path from 'path';
-import fs from 'fs';
 
 const NOTE_APP_DIR = './.noteapp';
 const metadata = path.join(NOTE_APP_DIR, 'metadata.json');
@@ -17,8 +16,3 @@ test('tests saving file to filesystem and checks for metadata creation', () => {
     NoteAccess.Save(note3);
 })
 
-test('tests deleting note from filesystem and checks fior metadata deletion', () => {
-    const NoteAccessProvider = new SimpleNotesProvider();
-    const NoteAccess = NoteAccessProvider.Create();
-    NoteAccess.Delete('22two8sdi7txvj8cnfcd19');
-})
