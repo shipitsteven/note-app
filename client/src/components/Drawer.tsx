@@ -24,7 +24,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
-// import ListItemText from '@material-ui/core/ListItemText'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
@@ -158,6 +157,7 @@ interface Props {
   preview: boolean
   value: string
   handlePreview: Dispatch<SetStateAction<boolean>>
+  handleNoteChange: Dispatch<SetStateAction<string>>
 }
 
 export default function NotesDrawer(props: Props): JSX.Element {
@@ -289,7 +289,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
                 </div>
               </AccordionSummary>
               <AccordionDetails>
-                <FolderTree />
+                <FolderTree handleChange={props.handleNoteChange} />
               </AccordionDetails>
             </Accordion>
           ) : (

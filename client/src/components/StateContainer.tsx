@@ -12,7 +12,12 @@ export const StateContainer: React.FC = () => {
 
   return (
     <>
-      <NotesDrawer preview={preview} handlePreview={setPreview.bind(this)} value={value}>
+      <NotesDrawer
+        preview={preview}
+        handlePreview={setPreview.bind(this)}
+        value={value}
+        handleNoteChange={setValue.bind(this)}
+      >
         <div className="flex-container">
           <Editable
             value={value}

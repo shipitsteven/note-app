@@ -1,5 +1,6 @@
 import path from 'path';
-const fs = window.require('fs');
+import isElectron from 'is-electron';
+const fs = isElectron() ? window.require('fs') : require('fs');
 const NOTES_DIR = './notes';
 
 if (!fs.existsSync(NOTES_DIR)) {
@@ -78,12 +79,10 @@ class FileStore implements DataStore {
     }
 
     Get(id: string): DataStoreResultWithData<Note | null> {
-        const file = id + '.md';
-        const res = path.join(NOTES_DIR, file);
-        if (!fs.existsSync(res)) {
+        if (!fs.existsSync(id)) {
             return new SimpleDataStoreResultWithData(false, null);
         } else {
-            const data = fs.readFileSync(res, 'utf8');
+            const data = fs.readFileSync(id, 'utf8');
             const note = new Note(id, data);
             return new SimpleDataStoreResultWithData(true, note);
         }
@@ -117,6 +116,6 @@ class Note {
     edit(content: string): void {
         this.content = content;
     }
-} 
+}
 
 export {Note, FileStoreProvider}
