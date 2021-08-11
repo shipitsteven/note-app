@@ -57,14 +57,14 @@ export const FolderTree: React.FC<Props> = (props) => {
       event.preventDefault()
       const DataStoreProvider = new FileStoreProvider()
       const FileStore = DataStoreProvider.Create()
-      const note = FileStore.Get(node.name.split('.')[0])
+      const note = FileStore.Get(node.path)
+      console.log(node)
       if (note.IsSuccess()) {
-        console.log(note.GetResult()?.content)
         const text = note.GetResult()?.content || ''
         // eslint-disable-next-line react/prop-types
         props.handleChange(text)
       } else {
-        console.log(note.GetResult())
+        alert('Something went wrong while retrieving notes :(')
       }
     }
     return event
