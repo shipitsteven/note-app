@@ -36,7 +36,7 @@ import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
 import { Note, FileStoreProvider } from '../note_storage'
 import { FolderTree } from './FolderTree'
-import {searchResult} from '../LunrSearch'
+import {searchResult} from '../simpleSearch'
 
 const drawerWidth = 380
 
@@ -210,7 +210,9 @@ export default function NotesDrawer(props: Props): JSX.Element {
           <div className={classes.search}>
             <div className={classes.searchIcon}>
             </div>
-            <button onClick = {()=>{searchResult(searchKey)}}>search</button>
+            <button onClick = {()=>{
+              searchResult(searchKey)
+              }}>search</button>
             <InputBase
               placeholder="Search…"
               classes={{
