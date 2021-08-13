@@ -1,5 +1,6 @@
 import path from 'path';
-const fs = window.require('fs');
+import isElectron from 'is-electron';
+const fs = isElectron() ? window.require('fs') : require('fs');
 const NOTES_DIR = './notes';
 
 if (!fs.existsSync(NOTES_DIR)) {
@@ -8,7 +9,7 @@ if (!fs.existsSync(NOTES_DIR)) {
 
 // Datastore interface that implements 5 basic features
 interface DataStore {
-    Save(note: Note): DataStoreResult;
+    Save(id: string, content: string): DataStoreResult;
     Delete(id: string): DataStoreResult;
     Get(id: string): DataStoreResultWithData<Note | null>;
     GetAll(): DataStoreResultWithData<Array<string> | null>;
@@ -64,9 +65,8 @@ class FileStoreProvider implements DataStoreProvider {
 }
 
 class FileStore implements DataStore {
-    Save(note: Note): DataStoreResult {
-        const file = note.id + '.md';
-        fs.writeFileSync(path.join(NOTES_DIR, file), note.content);
+    Save(id: string, content: string): DataStoreResult {
+        fs.writeFileSync(id, content);
         return new SimpleDataStoreResult(true);
     }
 
@@ -79,7 +79,6 @@ class FileStore implements DataStore {
 
     Get(id: string): DataStoreResultWithData<Note | null> {
         const file = id;
-        //const res = path.join(NOTES_DIR, file);
         if (!fs.existsSync(id)) {
             return new SimpleDataStoreResultWithData(false, null);
         } else {
@@ -117,6 +116,6 @@ class Note {
     edit(content: string): void {
         this.content = content;
     }
-} 
+}
 
 export {Note, FileStoreProvider}
