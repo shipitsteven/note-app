@@ -23,5 +23,5 @@ export function searchResult(searchTerm:string){
 
   const result = filterItems(arr,searchTerm)
 
-  return console.log(result);
+  return result;
 }
