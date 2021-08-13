@@ -78,6 +78,7 @@ class FileStore implements DataStore {
     }
 
     Get(id: string): DataStoreResultWithData<Note | null> {
+        const file = id;
         if (!fs.existsSync(id)) {
             return new SimpleDataStoreResultWithData(false, null);
         } else {
@@ -94,7 +95,7 @@ class FileStore implements DataStore {
             files.forEach(f => {
               fs.statSync(f).isDirectory() && rreaddirSync(f, allFiles)
             })
-            return allFiles
+            return allFiles.filter(f=> !fs.statSync(f).isDirectory())
         }
         const notes = rreaddirSync(NOTES_DIR);
         return new SimpleDataStoreResultWithData(true, notes);
