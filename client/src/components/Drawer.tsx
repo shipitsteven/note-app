@@ -24,7 +24,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
@@ -32,8 +31,11 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import LabelRoundedIcon from '@material-ui/icons/LabelTwoTone'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
-import { fakeNotes, fakeTags } from '../mock/fakeNotes'
+import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
+import { Note, FileStoreProvider } from '../note_storage'
+import { FolderTree } from './FolderTree'
+import {searchResult} from '../simpleSearch'
 
 const drawerWidth = 380
 
@@ -154,17 +156,25 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
   children: React.ReactElement<any>
   preview: boolean
+  noteId: string
+  value: string
   handlePreview: Dispatch<SetStateAction<boolean>>
+  handleNoteChange: Dispatch<SetStateAction<string>>
+  handleNoteId: Dispatch<SetStateAction<string>>
 }
 
 export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
-  const [searchKey, setSearchKey]=React.useState('')
+  const [searchKey, setSearchKey] = React.useState('')
 
-  const handleChipOnClick = (name:string)=>{
+  const handleChipOnClick = (name: string) => {
     setSearchKey('#tag ' + name)
+  }
+
+  const handleChange = (key:string)=>{
+    setSearchKey(key)
   }
 
   const handleDrawerOpen = () => {
@@ -201,8 +211,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <SearchIcon />
             </div>
+            <button onClick = {()=>{
+              searchResult(searchKey)
+              }}>search</button>
             <InputBase
               placeholder="Search…"
               classes={{
@@ -210,7 +222,8 @@ export default function NotesDrawer(props: Props): JSX.Element {
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'Search' }}
-              value = {searchKey}
+              value={searchKey}
+              onChange={(event) => handleChange(event.target.value)}
             />
           </div>
           <Button
@@ -222,6 +235,25 @@ export default function NotesDrawer(props: Props): JSX.Element {
             }}
           >
             Toggle Preview
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            onClick={() => {
+              // TODO: add save function
+              const DataStoreProvider = new FileStoreProvider()
+              const FileStore = DataStoreProvider.Create()
+              // const note = new Note('hello', props.value)
+              FileStore.Save(props.noteId, props.value)
+            }}
+            style={{
+              marginLeft: theme.spacing(2),
+              backgroundColor: theme.palette.common.white,
+              color: theme.palette.common.black,
+            }}
+          >
+            Save
           </Button>
         </Toolbar>
       </AppBar>
@@ -250,28 +282,28 @@ export default function NotesDrawer(props: Props): JSX.Element {
         <Divider />
         <List>
           {open ? (
-            fakeNotes.map(({ title, text, date }) => (
-              <>
-                <ListItem key={title}>
-                  <ListItemText
-                    primary={
-                      <>
-                        <Typography variant="subtitle1">{title}</Typography>
-                      </>
-                    }
-                    secondary={
-                      <React.Fragment>
-                        <Typography variant="caption">{date}</Typography>
-                        <Typography variant="body1" color="textPrimary">
-                          {text}
-                        </Typography>
-                      </React.Fragment>
-                    }
-                  />
-                </ListItem>
-                <Divider component="li" />
-              </>
-            ))
+            <Accordion className="flexWrapDiv">
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <div className={classes.flexWrapDiv}>
+                  <Avatar
+                    style={{ color: '#189AB4', background: 'transparent' }}
+                  >
+                    <NoteIcon />
+                  </Avatar>
+                  <Typography className={classes.heading}> Notes</Typography>
+                </div>
+              </AccordionSummary>
+              <AccordionDetails>
+                <FolderTree
+                  handleChange={props.handleNoteChange}
+                  handleNoteId={props.handleNoteId}
+                />
+              </AccordionDetails>
+            </Accordion>
           ) : (
             <ListItem>
               <ListItemIcon>

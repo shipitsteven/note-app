@@ -1,5 +1,6 @@
-import fs from 'fs';
 import path from 'path';
+import isElectron from 'is-electron';
+const fs = isElectron() ? window.require('fs') : require('fs');
 const NOTES_DIR = './notes';
 
 if (!fs.existsSync(NOTES_DIR)) {
@@ -8,7 +9,7 @@ if (!fs.existsSync(NOTES_DIR)) {
 
 // Datastore interface that implements 5 basic features
 interface DataStore {
-    Save(note: Note): DataStoreResult;
+    Save(id: string, content: string): DataStoreResult;
     Delete(id: string): DataStoreResult;
     Get(id: string): DataStoreResultWithData<Note | null>;
     GetAll(): DataStoreResultWithData<Array<string> | null>;
@@ -64,9 +65,8 @@ class FileStoreProvider implements DataStoreProvider {
 }
 
 class FileStore implements DataStore {
-    Save(note: Note): DataStoreResult {
-        const file = note.id + '.txt';
-        fs.writeFileSync(path.join(NOTES_DIR, file), note.content);
+    Save(id: string, content: string): DataStoreResult {
+        fs.writeFileSync(id, content);
         return new SimpleDataStoreResult(true);
     }
 
@@ -78,19 +78,26 @@ class FileStore implements DataStore {
     }
 
     Get(id: string): DataStoreResultWithData<Note | null> {
-        const file = id + '.txt';
-        const res = path.join(NOTES_DIR, file);
-        if (!fs.existsSync(res)) {
+        const file = id;
+        if (!fs.existsSync(id)) {
             return new SimpleDataStoreResultWithData(false, null);
         } else {
-            const data = fs.readFileSync(res, 'utf8');
+            const data = fs.readFileSync(id, 'utf8');
             const note = new Note(id, data);
             return new SimpleDataStoreResultWithData(true, note);
         }
     }
 
     GetAll(): DataStoreResultWithData<Array<string> | null> {
-        const notes = fs.readdirSync(NOTES_DIR);
+        function rreaddirSync (dir: string, allFiles: string[] = []): string[] {
+            const files = fs.readdirSync(dir).map(f => path.join(dir, f))
+            allFiles.push(...files)
+            files.forEach(f => {
+              fs.statSync(f).isDirectory() && rreaddirSync(f, allFiles)
+            })
+            return allFiles.filter(f=> !fs.statSync(f).isDirectory())
+        }
+        const notes = rreaddirSync(NOTES_DIR);
         return new SimpleDataStoreResultWithData(true, notes);
     }
 }
@@ -109,6 +116,6 @@ class Note {
     edit(content: string): void {
         this.content = content;
     }
-} 
+}
 
 export {Note, FileStoreProvider}
