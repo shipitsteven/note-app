@@ -34,7 +34,7 @@ import Avatar from '@material-ui/core/Avatar'
 import { SetStateAction } from 'react'
 import { Note, FileStoreProvider } from '../note_storage'
 import { FolderTree } from './FolderTree'
-import {searchResult} from '../simpleSearch'
+import { searchResult } from '../simpleSearch'
 import { checkTags } from '../tagsBar'
 import { fakeTags } from '../mock/fakeNotes'
 
@@ -174,7 +174,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
     setSearchKey('#' + name)
   }
 
-  const handleChange = (key:string)=>{
+  const handleChange = (key: string) => {
     setSearchKey(key)
   }
 
@@ -213,9 +213,9 @@ export default function NotesDrawer(props: Props): JSX.Element {
           <div className={classes.search}>
             <div className={classes.searchIcon}>
             </div>
-            <button onClick = {()=>{
+            <button onClick={() => {
               searchResult(searchKey)
-              }}>search</button>
+            }}>search</button>
             <InputBase
               placeholder="Search…"
               classes={{
@@ -224,7 +224,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               }}
               inputProps={{ 'aria-label': 'Search' }}
               value={searchKey}
-              onChange={(event) => {handleChange(event.target.value);searchResult(event.target.value)}}
+              onChange={(event) => { handleChange(event.target.value); searchResult(event.target.value) }}
             />
           </div>
           <Button
@@ -334,14 +334,14 @@ export default function NotesDrawer(props: Props): JSX.Element {
               <div className={classes.flexWrapDiv}>
                 {checkTags().map(({ name, color }) => (
                   <Chip
-                    onClick={() => {handleChipOnClick(name);searchResult('#'+name)}}
+                    onClick={() => { handleChipOnClick(name); searchResult('#' + name) }}
                     label={name}
                     key={name}
                     style={{
                       backgroundColor: color,
                       margin: '0.25em',
                     }}
-                    // TODO: add on click handler
+                  // TODO: add on click handler
                   />
                 ))}
               </div>
