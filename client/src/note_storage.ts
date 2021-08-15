@@ -78,7 +78,6 @@ class FileStore implements DataStore {
     }
 
     Get(id: string): DataStoreResultWithData<Note | null> {
-        const file = id;
         if (!fs.existsSync(id)) {
             return new SimpleDataStoreResultWithData(false, null);
         } else {
