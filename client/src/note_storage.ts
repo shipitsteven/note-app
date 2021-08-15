@@ -8,22 +8,23 @@ if (!fs.existsSync(NOTES_DIR)) {
 }
 
 // Datastore interface that implements 5 basic features
-interface DataStore {
-    Save(id: string, content: string): DataStoreResult;
+export interface DataStore {
+    Save(note: Note): DataStoreResult;
     Delete(id: string): DataStoreResult;
     Get(id: string): DataStoreResultWithData<Note | null>;
-    GetAll(): DataStoreResultWithData<Array<string> | null>;
+    GetAll(): DataStoreResultWithData<Array<string>>;
+    GetAllNotes(): DataStoreResultWithData<Array<Note>>;
 }
 
-interface DataStoreProvider {
+export interface DataStoreProvider {
     Create(): DataStore;
 }
 
-interface DataStoreResult {
+export interface DataStoreResult {
     IsSuccess(): boolean;
 }
 
-interface DataStoreResultWithData<T> extends DataStoreResult {
+export interface DataStoreResultWithData<T> extends DataStoreResult {
     GetResult(): T;
 }
 
@@ -58,15 +59,15 @@ class SimpleDataStoreResultWithData<T> implements DataStoreResultWithData<T> {
     }
 }
 
-class FileStoreProvider implements DataStoreProvider {
-    Create(): FileStore {
-        return new FileStore();
-    }
-}
+export class FileStore implements DataStore {
+    NoteRoot: string;
 
-class FileStore implements DataStore {
-    Save(id: string, content: string): DataStoreResult {
-        fs.writeFileSync(id, content);
+    constructor(noteRoot = "./") {
+        this.NoteRoot = noteRoot;
+    }
+
+    Save(note: Note): DataStoreResult {
+        fs.writeFileSync(note.id, note.content);
         return new SimpleDataStoreResult(true);
     }
 
@@ -77,10 +78,9 @@ class FileStore implements DataStore {
         return new SimpleDataStoreResult(true);
     }
 
-    Get(id: string): DataStoreResultWithData<Note | null> {
-        const file = id;
+    Get(id: string): DataStoreResultWithData<Note> {
         if (!fs.existsSync(id)) {
-            return new SimpleDataStoreResultWithData(false, null);
+            return new SimpleDataStoreResultWithData(false, new Note(id));
         } else {
             const data = fs.readFileSync(id, 'utf8');
             const note = new Note(id, data);
@@ -88,7 +88,7 @@ class FileStore implements DataStore {
         }
     }
 
-    GetAll(): DataStoreResultWithData<Array<string> | null> {
+    GetAll(): DataStoreResultWithData<Array<string>> {
         function rreaddirSync (dir: string, allFiles: string[] = []): string[] {
             const files = fs.readdirSync(dir).map(f => path.join(dir, f))
             allFiles.push(...files)
@@ -100,14 +100,25 @@ class FileStore implements DataStore {
         const notes = rreaddirSync(NOTES_DIR);
         return new SimpleDataStoreResultWithData(true, notes);
     }
+
+    GetAllNotes(): DataStoreResultWithData<Array<Note>> {
+        const files: string[] = this.GetAll().GetResult();
+
+        const notes = new Array<Note>();
+        files.forEach(element => {
+            notes.push(this.Get(element).GetResult())
+        });
+
+        return new SimpleDataStoreResultWithData<Array<Note>>(true, notes);
+    }
 }
 
-class Note {
+export class Note {
     id: string;
     content: string;
     tags: Array<string>;
 
-    constructor(id: string, content: string) {
+    constructor(id: string, content = "") {
         this.id = id;
         this.content = content;
         this.tags = [];
@@ -117,5 +128,3 @@ class Note {
         this.content = content;
     }
 }
-
-export {Note, FileStoreProvider}

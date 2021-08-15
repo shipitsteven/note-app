@@ -1,27 +1,26 @@
-import { string } from 'prop-types';
-import {FileStoreProvider, Note} from './note_storage';
-const fs = window.require('fs');
-const DataStoreProvider = new FileStoreProvider();
-const Database = DataStoreProvider.Create();
+import { Note } from './note_storage';
 
+import { getDataStore } from './config';
 
-export function searchResult(searchTerm:string){
+const Database = getDataStore();
+
+export function searchNotes(searchTerm: string) : Note[] {
   const allNotes = Database.GetAll().GetResult();
-  const arr:Note[] = [];
+  const arr: Note[] = [];
 
-  if(searchTerm)
-    allNotes?.forEach((item)=>{
-        const note = Database.Get(item).GetResult();
-        if(note!=null||note!=undefined){
-          arr.push(note)
-        }
+  if (searchTerm)
+    allNotes?.forEach((item) => {
+      const note = Database.Get(item).GetResult();
+      if (note != null || note != undefined) {
+        arr.push(note)
+      }
     })
 
-  const filterItems = (arr:Note[], query:string) => {
+  const filterItems = (arr: Note[], query: string) => {
     return arr.filter(el => el.content.toLowerCase().indexOf(query.toLowerCase()) !== -1)
   }
 
-  const result = filterItems(arr,searchTerm)
+  const result = filterItems(arr, searchTerm)
 
   return result;
 }

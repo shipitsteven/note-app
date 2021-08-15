@@ -1,12 +1,19 @@
-import {FileStoreProvider, Note} from './note_storage';
+import {DataStoreProvider, FileStore, Note, DataStore} from './note_storage';
 import path from 'path';
 import fs from 'fs';
+
+class FileStoreProvider implements DataStoreProvider {
+    Create(): DataStore {
+        return new FileStore("./notes");
+    }
+}
+
+const getFilestore = () : DataStore => { return new FileStoreProvider().Create(); }
 
 const NOTES_DIR = './notes';
 
 test('tests saving note to file system', () => {
-    const DataStoreProvider = new FileStoreProvider();
-    const FileStore = DataStoreProvider.Create();
+    const FileStore = getFilestore();
     const note = new Note('hello', '');
     const id = 'hello.txt';
     const file = path.join(NOTES_DIR, id);
@@ -17,8 +24,7 @@ test('tests saving note to file system', () => {
 })
 
 test('tests getting a list of all notes from the datastore', () => {
-    const DataStoreProvider = new FileStoreProvider();
-    const Database = DataStoreProvider.Create();
+    const Database = getFilestore();
     const note = new Note("foo", "");
     const note2 = new Note("bar", "");
     Database.Save(note);
@@ -31,8 +37,7 @@ test('tests getting a list of all notes from the datastore', () => {
 })
 
 test('tests deleting a note from the file system', () => {
-    const DataStoreProvider = new FileStoreProvider();
-    const FileStore = DataStoreProvider.Create();
+    const FileStore = getFilestore();
     const note = new Note('hello', '');
     const id = "hello.txt";
     const file = path.join(NOTES_DIR, id);
@@ -43,8 +48,7 @@ test('tests deleting a note from the file system', () => {
 })
 
 test('tests getting a note from the datastore', () => {
-    const DataStoreProvider = new FileStoreProvider();
-    const FileStore = DataStoreProvider.Create();
+    const FileStore = getFilestore();
     const note = new Note('bob', 'My name is Bob.');
     FileStore.Save(note);
     const result = FileStore.Get('bob').GetResult()!;

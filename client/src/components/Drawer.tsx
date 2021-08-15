@@ -33,9 +33,12 @@ import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
 import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
-import { Note, FileStoreProvider } from '../note_storage'
+import { Note } from '../note_storage'
+import { getDataStore } from '../config'
 import { FolderTree } from './FolderTree'
-import {searchResult} from '../simpleSearch'
+import {searchNotes} from '../simpleSearch'
+
+import { useEffect } from 'react'
 
 const drawerWidth = 380
 
@@ -185,6 +188,11 @@ export default function NotesDrawer(props: Props): JSX.Element {
     setOpen(false)
   }
 
+  useEffect(() => {
+    const notes = getDataStore();
+
+  })
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -213,7 +221,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
             <div className={classes.searchIcon}>
             </div>
             <button onClick = {()=>{
-              searchResult(searchKey)
+              searchNotes(searchKey)
               }}>search</button>
             <InputBase
               placeholder="Search…"
@@ -242,10 +250,9 @@ export default function NotesDrawer(props: Props): JSX.Element {
             disableElevation
             onClick={() => {
               // TODO: add save function
-              const DataStoreProvider = new FileStoreProvider()
-              const FileStore = DataStoreProvider.Create()
-              // const note = new Note('hello', props.value)
-              FileStore.Save(props.noteId, props.value)
+              const store = getDataStore();
+              const note = new Note('hello', props.value)
+              store.Save(note);
             }}
             style={{
               marginLeft: theme.spacing(2),
