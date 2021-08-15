@@ -36,6 +36,7 @@ import { Note, FileStoreProvider } from '../note_storage'
 import { FolderTree } from './FolderTree'
 import {searchResult} from '../simpleSearch'
 import { checkTags } from '../tagsBar'
+import { fakeTags } from '../mock/fakeNotes'
 
 const drawerWidth = 380
 
@@ -170,7 +171,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
   const [searchKey, setSearchKey] = React.useState('')
 
   const handleChipOnClick = (name: string) => {
-    setSearchKey('#tag' + name)
+    setSearchKey('#' + name)
   }
 
   const handleChange = (key:string)=>{
@@ -333,7 +334,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               <div className={classes.flexWrapDiv}>
                 {checkTags().map(({ name, color }) => (
                   <Chip
-                    onClick={() => {handleChipOnClick(name);searchResult('#tag'+name)}}
+                    onClick={() => {handleChipOnClick(name);searchResult('#'+name)}}
                     label={name}
                     key={name}
                     style={{

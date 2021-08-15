@@ -7,12 +7,12 @@ interface tags{
 }
 
 export function checkTags(){
-    const searchTag = '#tag'
+    const searchTag = '#'
     const tags:tags[] = [];
     let newTagList:string[]=[];
 
     const filterItems = (arr:any, query:string) => {
-        return arr.filter(el => el.toLowerCase().indexOf(query.toLowerCase()) !== -1)
+        return arr.filter(e => e.toLowerCase().indexOf(query.toLowerCase()) !== -1)
     }
 
     function onlyUnique(value:string, index:number, self:string[]){
@@ -22,7 +22,7 @@ export function checkTags(){
     //search for notes with tags
     const noteWithTag = searchResult(searchTag)
 
-    //get the all the tags are exist now(new tag list)
+    //get all the tags are exist now
     for(let i = 0; i < noteWithTag.length;i++){
         const temp = noteWithTag[i].content.split(/[\s]/)
         newTagList.push(filterItems(temp, searchTag))
@@ -30,10 +30,10 @@ export function checkTags(){
     newTagList = newTagList.flat()
     newTagList = newTagList.filter(onlyUnique)
     for(let i = 0; i < newTagList.length;i++){
-        newTagList[i] = newTagList[i].slice(4,)
+        newTagList[i] = newTagList[i].slice(1,)
     }
+    newTagList = newTagList.filter(e=>e.length>0)
 
-    // compare old and new tag list
     const result = newTagList.map(e =>{
         return{
             name:e,
@@ -42,6 +42,5 @@ export function checkTags(){
     })
 
     const newTags = Object.assign(tags, result)
-
     return newTags
 }
