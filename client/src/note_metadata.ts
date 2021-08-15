@@ -1,4 +1,4 @@
-class Note_metadata {
+class NoteMetadata {
     id: string;
     tags: Array<string>;
     date_created: string;
@@ -22,8 +22,8 @@ class Note_metadata {
     }
 
     get_date(): string {
-        return new Date().toString();
+        return new Date().toISOString();
     }
 }
 
-export {Note_metadata}
+export {NoteMetadata}

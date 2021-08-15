@@ -7,7 +7,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import TreeItem from '@material-ui/lab/TreeItem'
 import { makeStyles } from '@material-ui/core/styles'
 import { Dispatch } from 'react'
-import { FileStoreProvider } from '../note_storage'
+import { SimpleNotesProvider } from '../note_access'
 const dirTree = window.require('directory-tree')
 
 const useStyles = makeStyles({
@@ -57,8 +57,8 @@ export const FolderTree: React.FC<Props> = (props) => {
     if (node.type === 'file' && node.extension === '.md') {
       // get content of file
       event.preventDefault()
-      const DataStoreProvider = new FileStoreProvider()
-      const FileStore = DataStoreProvider.Create()
+      const NotesProvider = new SimpleNotesProvider()
+      const FileStore = NotesProvider.Create()
       const note = FileStore.Get(node.path)
       if (note.IsSuccess()) {
         const text = note.GetResult()?.content || ''

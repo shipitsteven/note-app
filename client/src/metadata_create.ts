@@ -1,14 +1,15 @@
-import fs from 'fs';
 import path from 'path';
-import { Note_metadata } from './note_metadata';
+import { NoteMetadata } from './note_metadata';
+import isElectron from 'is-electron';
+const fs = isElectron() ? window.require('fs') : require('fs');
 const NOTE_APP_DIR = './.noteapp';
 const metadata = path.join(NOTE_APP_DIR, 'metadata.json');
 
 interface NoteMetaData {
     Create(): NoteMetaDataResult;
-    Add(noteData: Note_metadata): NoteMetaDataResult;
+    Add(noteData: NoteMetadata): NoteMetaDataResult;
     Delete(id: string): NoteMetaDataResult;
-    Get(id: string): NoteMetaDataResultWithData<Note_metadata | null>;
+    Get(id: string): NoteMetaDataResultWithData<NoteMetadata | null>;
 }
 
 interface NoteMetaDataProvider {
@@ -68,7 +69,7 @@ class MetaDataAccess implements NoteMetaData {
         return new SimpleNoteMetaDataResult(true);
     }
 
-    Add(noteData: Note_metadata): NoteMetaDataResult {
+    Add(noteData: NoteMetadata): NoteMetaDataResult {
         const readData = fs.readFileSync(metadata, 'utf8');
         const data = JSON.parse(readData);
         data[noteData.id] = noteData;
@@ -90,12 +91,12 @@ class MetaDataAccess implements NoteMetaData {
         }
     }
 
-    Get(id: string): NoteMetaDataResultWithData<Note_metadata | null> {
+    Get(id: string): NoteMetaDataResultWithData<NoteMetadata | null> {
         const readData = fs.readFileSync(metadata, 'utf8');
         const data = JSON.parse(readData);
         if (id in data) {
-            const metadata = data[id];
-            return new SimpleNoteMetaDataResultWithData(true, metadata);
+            const noteMetadata = data[id];
+            return new SimpleNoteMetaDataResultWithData(true, noteMetadata);
         } else {
             return new SimpleNoteMetaDataResultWithData(false, null);
         }

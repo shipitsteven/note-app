@@ -33,9 +33,10 @@ import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
 import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
-import { Note, FileStoreProvider } from '../note_storage'
+import { SimpleNotesProvider} from '../note_access'
 import { FolderTree } from './FolderTree'
 import {searchResult} from '../simpleSearch'
+import {Note} from '../note_storage'
 
 const drawerWidth = 380
 
@@ -241,11 +242,11 @@ export default function NotesDrawer(props: Props): JSX.Element {
             color="primary"
             disableElevation
             onClick={() => {
-              // TODO: add save function
-              const DataStoreProvider = new FileStoreProvider()
-              const FileStore = DataStoreProvider.Create()
+              const NotesProvider = new SimpleNotesProvider()
+              const NoteAccess = NotesProvider.Create()
               // const note = new Note('hello', props.value)
-              FileStore.Save(props.noteId, props.value)
+              const note = new Note(props.noteId, props.value)
+              NoteAccess.Save(note)
             }}
             style={{
               marginLeft: theme.spacing(2),
