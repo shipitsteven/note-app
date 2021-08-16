@@ -1,11 +1,9 @@
-import { string } from 'prop-types';
 import {FileStoreProvider, Note} from './note_storage';
-const fs = window.require('fs');
 const DataStoreProvider = new FileStoreProvider();
 const Database = DataStoreProvider.Create();
 
 
-export function searchResult(searchTerm:string){
+export function searchResult(searchTerm:string) : Note[] {
   const allNotes = Database.GetAll().GetResult();
   const arr:Note[] = [];
 

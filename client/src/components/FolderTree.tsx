@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 interface TreeNode {
   path: string
   name: string
-  size: number
+  size?: number
   type: string
   children: [TreeNode]
   extension?: string

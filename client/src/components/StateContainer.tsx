@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Editable } from './Editable'
 import { Preview } from './Preview'
 import NotesDrawer from './Drawer'
+import { getAllNotes } from '../util/getAllNotes'
+import { parseTreeFromNotes } from '../util/parseTreeFromNotes'
 
 export const StateContainer: React.FC = () => {
   const [value, setValue] = useState(
@@ -10,6 +12,12 @@ export const StateContainer: React.FC = () => {
   const [noteId, setNoteId] = useState('')
 
   const [preview, setPreview] = useState(true)
+
+  const [folderTree, setFolderTree] = useState({})
+
+  useEffect(() => {
+    setFolderTree(parseTreeFromNotes(getAllNotes()))
+  }, [])
 
   return (
     <>
