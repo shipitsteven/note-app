@@ -71,7 +71,7 @@ class MetaDataAccess implements NoteMetaData {
 
     Add(noteData: NoteMetadata): NoteMetaDataResult {
         const readData = fs.readFileSync(metadata, 'utf8');
-        const data = JSON.parse(readData);
+        const data: NoteMetadata = JSON.parse(readData);
         data[noteData.id] = noteData;
         const writeData = JSON.stringify(data, null, 2);
         fs.writeFileSync(metadata, writeData);
@@ -80,7 +80,7 @@ class MetaDataAccess implements NoteMetaData {
 
     Delete(id: string): NoteMetaDataResult {
         const readData = fs.readFileSync(metadata, 'utf8');
-        const data = JSON.parse(readData);
+        const data: NoteMetadata = JSON.parse(readData);
         if (id in data) {
             delete data[id];
             const writeData = JSON.stringify(data, null, 2);
@@ -93,7 +93,7 @@ class MetaDataAccess implements NoteMetaData {
 
     Get(id: string): NoteMetaDataResultWithData<NoteMetadata | null> {
         const readData = fs.readFileSync(metadata, 'utf8');
-        const data = JSON.parse(readData);
+        const data: NoteMetadata = JSON.parse(readData);
         if (id in data) {
             const noteMetadata = data[id];
             return new SimpleNoteMetaDataResultWithData(true, noteMetadata);

@@ -115,7 +115,7 @@ class SimpleNoteAccess implements NoteAccess {
                     this.MetaDataStore.Add(noteData);
                 } else {
                     const noteData = data.Get(note.id).GetResult()!;
-                    noteData.update_date();
+                    noteData.date_edited = new Date().toISOString();
                     this.MetaDataStore.Add(noteData!);
                 }
                 // replace these print statements with UI method calls

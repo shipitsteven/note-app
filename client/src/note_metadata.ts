@@ -1,4 +1,10 @@
-class NoteMetadata {
+interface Metadata {
+    update_tags(tags: Array<string>): void;
+    update_date(): void;
+    get_date(): string;
+}
+
+class NoteMetadata implements Metadata {
     id: string;
     tags: Array<string>;
     date_created: string;
