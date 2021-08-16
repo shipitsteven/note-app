@@ -8,10 +8,6 @@
 # testing
 /coverage
 
-#database
-noteAppDB.db
-note_storage.js
-
 # production
 /build
 
@@ -28,3 +24,4 @@ yarn-error.log*
 
 # user generated files
 /notes
+/.noteapp

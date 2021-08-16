@@ -118,15 +118,12 @@ class SimpleNoteAccess implements NoteAccess {
                     noteData.date_edited = new Date().toISOString();
                     this.MetaDataStore.Add(noteData!);
                 }
-                // replace these print statements with UI method calls
-                console.log('Successfully Saved Note');
                 return new SimpleNoteAccessResult(true);
             } else {
-                console.log('Could Not Save Note');
                 return new SimpleNoteAccessResult(false);
             }
         } else {
-            console.log('Invalid Note');
+            // Invalid note.
             return new SimpleNoteAccessResult(false);
         }
     }
@@ -134,16 +131,13 @@ class SimpleNoteAccess implements NoteAccess {
     Delete(id: string): NoteAccessResult {
         if (this.ValidateName(id).IsSuccess()) {
             const res = this.FileStore.Delete(id);
-            if (res.IsSuccess()) {
-                // replace these print statement with UI method calls
-                console.log('Successfully Deleted Note');
+            if (res.IsSuccess()) { 
                 return new SimpleNoteAccessResult(true);
             } else {
-                console.log('Could Not Delete Note');
                 return new SimpleNoteAccessResult(false);
             }
         } else {
-            console.log('Note With That Name Does Not Exist');
+            // Note with that name does not exist.
             return new SimpleNoteAccessResult(false);
         }
     }
@@ -152,15 +146,12 @@ class SimpleNoteAccess implements NoteAccess {
         if (this.ValidateName(id).IsSuccess()) {
             const note = this.FileStore.Get(id);
             if (note.IsSuccess()) {
-                // replace these print statement with UI method calls
-                console.log('Successfully Retrieved Note');
                 return new SimpleNoteAccessResultWithNote(true, note.GetResult());
             } else {
-                console.log('Could Not Retrieve Note');
                 return new SimpleNoteAccessResultWithNote(false, null);
             }
         } else {
-            console.log('Note With That Name Does Not Exist');
+            // Note with that name does not exist.
             return new SimpleNoteAccessResultWithNote(false, null);
         }
     }
@@ -171,15 +162,12 @@ class SimpleNoteAccess implements NoteAccess {
             if (res.IsSuccess()) {
                 const note = res.GetResult()!;
                 note.tags.push(tag);
-                // replace these print statement with UI method calls
-                console.log('Successfully Added Tag');
                 return new SimpleNoteAccessResult(true);
             } else {
-                console.log('Could Not Added Tag');
                 return new SimpleNoteAccessResult(false);
             } 
         } else {
-            console.log('Note Does Not Exist');
+            // Note does not exist.
             return new SimpleNoteAccessResult(false);
         }
     }
