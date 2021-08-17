@@ -7,8 +7,8 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import TreeItem from '@material-ui/lab/TreeItem'
 import { makeStyles } from '@material-ui/core/styles'
 import { Dispatch } from 'react'
-import { Note, FileStoreProvider } from '../note_storage'
-const dirTree = window.require('directory-tree')
+import { FileStoreProvider } from '../note_storage'
+import { Typography } from '@material-ui/core'
 
 const useStyles = makeStyles({
   root: {
@@ -39,20 +39,26 @@ export const FolderTree: React.FC<Props> = (props) => {
   }, [])
 
   // NEXT: each file should be an active link, so user can open the selected note
-  const renderTree = (nodes: any) => (
-    <TreeItem
-      key={nodes.name}
-      nodeId={nodes.name}
-      label={nodes.name}
-      onLabelClick={(event) => {
-        getNote(nodes, event)
-      }}
-    >
-      {Array.isArray(nodes.children)
-        ? nodes.children.map((node) => renderTree(node))
-        : null}
-    </TreeItem>
-  )
+  const renderTree = (nodes: any) => {
+    if (nodes) {
+      return (
+        <TreeItem
+          key={nodes.name}
+          nodeId={nodes.name}
+          label={nodes.name}
+          onLabelClick={(event) => {
+            getNote(nodes, event)
+          }}
+        >
+          {Array.isArray(nodes.children)
+            ? nodes.children.map((node) => renderTree(node))
+            : null}
+        </TreeItem>
+      )
+    } else {
+      return <Typography>No results found</Typography>
+    }
+  }
 
   const getNote = (node: TreeNode, event: React.MouseEvent) => {
     const fileExtension = node.id.split('.').slice(-1).toString()

@@ -33,9 +33,8 @@ import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
 import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
-import { Note, FileStoreProvider } from '../note_storage'
+import { FileStoreProvider } from '../note_storage'
 import { FolderTree } from './FolderTree'
-import { searchResult } from '../simpleSearch'
 import { TreeNode } from '../util/parseTreeFromNotes'
 
 const drawerWidth = 380
@@ -160,23 +159,24 @@ interface Props {
   noteId: string
   value: string
   folderTree: TreeNode
+  searchTerm: string
   handlePreview: Dispatch<SetStateAction<boolean>>
   handleNoteChange: Dispatch<SetStateAction<string>>
   handleNoteId: Dispatch<SetStateAction<string>>
+  handleSearchTerm: Dispatch<SetStateAction<string>>
 }
 
 export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
-  const [searchKey, setSearchKey] = React.useState('')
 
   const handleChipOnClick = (name: string) => {
-    setSearchKey('#tag ' + name)
+    props.handleSearchTerm('#tag:' + name)
   }
 
   const handleChange = (key: string) => {
-    setSearchKey(key)
+    props.handleSearchTerm(key)
   }
 
   const handleDrawerOpen = () => {
@@ -212,14 +212,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
             [Note Title Goes Here]
           </Typography>
           <div className={classes.search}>
-            <div className={classes.searchIcon}></div>
-            <button
-              onClick={() => {
-                searchResult(searchKey)
-              }}
-            >
-              search
-            </button>
+            <div className={classes.searchIcon}>
+              <SearchIcon />
+            </div>
+
             <InputBase
               placeholder="Search…"
               classes={{
@@ -227,7 +223,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'Search' }}
-              value={searchKey}
+              value={props.searchTerm}
               onChange={(event) => handleChange(event.target.value)}
             />
           </div>
@@ -246,10 +242,8 @@ export default function NotesDrawer(props: Props): JSX.Element {
             color="primary"
             disableElevation
             onClick={() => {
-              // TODO: add save function
               const DataStoreProvider = new FileStoreProvider()
               const FileStore = DataStoreProvider.Create()
-              // const note = new Note('hello', props.value)
               FileStore.Save(props.noteId, props.value)
             }}
             style={{
@@ -338,6 +332,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               <div className={classes.flexWrapDiv}>
                 {fakeTags.map(({ name, color }) => (
                   <Chip
+                    // TODO: integrate with search function
                     onClick={() => handleChipOnClick(name)}
                     label={name}
                     key={name}
@@ -345,7 +340,6 @@ export default function NotesDrawer(props: Props): JSX.Element {
                       backgroundColor: color,
                       margin: '0.25em',
                     }}
-                    // TODO: add on click handler
                   />
                 ))}
               </div>

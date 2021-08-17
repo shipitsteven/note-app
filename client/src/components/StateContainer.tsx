@@ -4,6 +4,7 @@ import { Preview } from './Preview'
 import NotesDrawer from './Drawer'
 import { getAllNotes } from '../util/getAllNotes'
 import { parseTreeFromNotes } from '../util/parseTreeFromNotes'
+import { searchResult } from '../simpleSearch'
 
 export const StateContainer: React.FC = () => {
   const [value, setValue] = useState(
@@ -19,11 +20,19 @@ export const StateContainer: React.FC = () => {
     children: [],
   })
 
+  const [searchTerm, setSearchTerm] = useState('')
+
   useEffect(() => {
     setFolderTree(parseTreeFromNotes(getAllNotes()))
-
-    // console.log(getAllNotes())
   }, [])
+
+  useEffect(() => {
+    if (searchTerm === '') {
+      setFolderTree(parseTreeFromNotes(getAllNotes()))
+    } else {
+      setFolderTree(parseTreeFromNotes(searchResult(searchTerm)))
+    }
+  }, [searchTerm])
 
   return (
     <>
@@ -32,9 +41,11 @@ export const StateContainer: React.FC = () => {
         value={value}
         noteId={noteId}
         folderTree={folderTree}
+        searchTerm={searchTerm}
         handlePreview={setPreview.bind(this)}
         handleNoteChange={setValue.bind(this)}
         handleNoteId={setNoteId.bind(this)}
+        handleSearchTerm={setSearchTerm.bind(this)}
       >
         <div className="flex-container">
           <Editable
