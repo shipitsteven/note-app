@@ -12,7 +12,7 @@ export const parseTreeFromNotes = (notes: Note[]): TreeNode => {
   notes.forEach((note) => {
     let currentNode: TreeNode = root
     const split = note.id.split('/')
-    for(let i = 0; i < split.length - 1; i++) {
+    for (let i = 0; i < split.length - 1; i++) {
       const currentLevel = split[i]
 
       let childNode = currentNode.children.find((cNote) => {
@@ -30,12 +30,25 @@ export const parseTreeFromNotes = (notes: Note[]): TreeNode => {
 
       currentNode = childNode
     }
-    currentNode.children.push({
-      id: note.id,
-      name: split[split.length - 1],
-    })
+    const leafFileName = split[split.length - 1]
+    if (isMarkdown(leafFileName)) {
+      currentNode.children.push({
+        id: note.id,
+        name: split[split.length - 1],
+      })
+    }
   })
 
   // TODO: throw exception if notes folder haven't been created?
   return root.children[0]
+}
+
+const isMarkdown = (fileName: string) => {
+  try {
+    const extension: string = fileName.split('.').slice(-1)[0]
+    return extension === 'md'
+  } catch (e) {
+    console.log(e)
+    return false
+  }
 }

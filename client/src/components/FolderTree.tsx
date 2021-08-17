@@ -35,7 +35,7 @@ export const FolderTree: React.FC<Props> = (props) => {
   const classes = useStyles()
 
   useEffect(() => {
-    console.log(props.folderTree)
+    // console.log(props.folderTree)
   }, [])
 
   // NEXT: each file should be an active link, so user can open the selected note
