@@ -1,6 +1,6 @@
 import { Note } from '../note_storage'
 
-interface TreeNode {
+export interface TreeNode {
   id: string
   name: string
   children: [TreeNode] | any
@@ -8,31 +8,31 @@ interface TreeNode {
 
 export const parseTreeFromNotes = (notes: Note[]): TreeNode => {
   const root: TreeNode = { id: 'root', name: 'root', children: [] }
+
   notes.forEach((note) => {
-    let currentNode: TreeNode | undefined = root
+    let currentNode: TreeNode = root
     const split = note.id.split('/')
-
-    for (let i = 0; i < split.length - 1; i++) {
+    for(let i = 0; i < split.length - 1; i++) {
       const currentLevel = split[i]
-      const childNode: TreeNode | undefined = currentNode?.children?.find(
-        (note) => note.id === currentLevel
-      )
 
-      const newChild: TreeNode = {
-        id: currentLevel,
-        name: currentLevel,
-        children: [],
-      }
+      let childNode = currentNode.children.find((cNote) => {
+        return cNote.name == currentLevel
+      })
+
       if (childNode === undefined) {
-        currentNode.children.push(newChild)
+        childNode = {
+          id: currentLevel,
+          name: currentLevel,
+          children: [],
+        }
+        currentNode.children.push(childNode)
       }
 
-      currentNode = newChild
+      currentNode = childNode
     }
-    currentNode?.children?.push({
-      id: split[split.length - 1],
+    currentNode.children.push({
+      id: note.id,
       name: split[split.length - 1],
-      children: [],
     })
   })
 

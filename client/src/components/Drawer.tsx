@@ -35,7 +35,8 @@ import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
 import { Note, FileStoreProvider } from '../note_storage'
 import { FolderTree } from './FolderTree'
-import {searchResult} from '../simpleSearch'
+import { searchResult } from '../simpleSearch'
+import { TreeNode } from '../util/parseTreeFromNotes'
 
 const drawerWidth = 380
 
@@ -158,6 +159,7 @@ interface Props {
   preview: boolean
   noteId: string
   value: string
+  folderTree: TreeNode
   handlePreview: Dispatch<SetStateAction<boolean>>
   handleNoteChange: Dispatch<SetStateAction<string>>
   handleNoteId: Dispatch<SetStateAction<string>>
@@ -173,7 +175,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
     setSearchKey('#tag ' + name)
   }
 
-  const handleChange = (key:string)=>{
+  const handleChange = (key: string) => {
     setSearchKey(key)
   }
 
@@ -210,11 +212,14 @@ export default function NotesDrawer(props: Props): JSX.Element {
             [Note Title Goes Here]
           </Typography>
           <div className={classes.search}>
-            <div className={classes.searchIcon}>
-            </div>
-            <button onClick = {()=>{
-              searchResult(searchKey)
-              }}>search</button>
+            <div className={classes.searchIcon}></div>
+            <button
+              onClick={() => {
+                searchResult(searchKey)
+              }}
+            >
+              search
+            </button>
             <InputBase
               placeholder="Search…"
               classes={{
@@ -299,6 +304,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               </AccordionSummary>
               <AccordionDetails>
                 <FolderTree
+                  folderTree={props.folderTree}
                   handleChange={props.handleNoteChange}
                   handleNoteId={props.handleNoteId}
                 />

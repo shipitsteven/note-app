@@ -13,10 +13,16 @@ export const StateContainer: React.FC = () => {
 
   const [preview, setPreview] = useState(true)
 
-  const [folderTree, setFolderTree] = useState({})
+  const [folderTree, setFolderTree] = useState({
+    id: '',
+    name: '',
+    children: [],
+  })
 
   useEffect(() => {
     setFolderTree(parseTreeFromNotes(getAllNotes()))
+
+    // console.log(getAllNotes())
   }, [])
 
   return (
@@ -25,6 +31,7 @@ export const StateContainer: React.FC = () => {
         preview={preview}
         value={value}
         noteId={noteId}
+        folderTree={folderTree}
         handlePreview={setPreview.bind(this)}
         handleNoteChange={setValue.bind(this)}
         handleNoteId={setNoteId.bind(this)}
