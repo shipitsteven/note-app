@@ -169,7 +169,7 @@ interface Props {
 export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(true)
 
   const handleChipOnClick = (name: string) => {
     props.handleSearchTerm('#tag:' + name)
