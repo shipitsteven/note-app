@@ -31,11 +31,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import LabelRoundedIcon from '@material-ui/icons/LabelTwoTone'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
-import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
 import { Note, FileStoreProvider } from '../note_storage'
 import { FolderTree } from './FolderTree'
-import {searchResult} from '../simpleSearch'
+import { searchResult } from '../simpleSearch'
+import { checkTags } from '../tagsBar'
+import { fakeTags } from '../mock/fakeNotes'
 
 const drawerWidth = 380
 
@@ -170,10 +171,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
   const [searchKey, setSearchKey] = React.useState('')
 
   const handleChipOnClick = (name: string) => {
-    setSearchKey('#tag ' + name)
+    setSearchKey('#' + name)
   }
 
-  const handleChange = (key:string)=>{
+  const handleChange = (key: string) => {
     setSearchKey(key)
   }
 
@@ -212,9 +213,9 @@ export default function NotesDrawer(props: Props): JSX.Element {
           <div className={classes.search}>
             <div className={classes.searchIcon}>
             </div>
-            <button onClick = {()=>{
+            <button onClick={() => {
               searchResult(searchKey)
-              }}>search</button>
+            }}>search</button>
             <InputBase
               placeholder="Search…"
               classes={{
@@ -223,7 +224,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               }}
               inputProps={{ 'aria-label': 'Search' }}
               value={searchKey}
-              onChange={(event) => handleChange(event.target.value)}
+              onChange={(event) => { handleChange(event.target.value); searchResult(event.target.value) }}
             />
           </div>
           <Button
@@ -246,6 +247,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               const FileStore = DataStoreProvider.Create()
               // const note = new Note('hello', props.value)
               FileStore.Save(props.noteId, props.value)
+              checkTags()
             }}
             style={{
               marginLeft: theme.spacing(2),
@@ -330,16 +332,16 @@ export default function NotesDrawer(props: Props): JSX.Element {
             </AccordionSummary>
             <AccordionDetails>
               <div className={classes.flexWrapDiv}>
-                {fakeTags.map(({ name, color }) => (
+                {checkTags().map(({ name, color }) => (
                   <Chip
-                    onClick={() => handleChipOnClick(name)}
+                    onClick={() => { handleChipOnClick(name); searchResult('#' + name) }}
                     label={name}
                     key={name}
                     style={{
                       backgroundColor: color,
                       margin: '0.25em',
                     }}
-                    // TODO: add on click handler
+                  // TODO: add on click handler
                   />
                 ))}
               </div>
