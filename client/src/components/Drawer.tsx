@@ -36,6 +36,7 @@ import { SimpleNotesProvider} from '../note_access'
 import { FolderTree } from './FolderTree'
 import { searchResult } from '../simpleSearch'
 import { checkTags } from '../tagsBar'
+import { fakeTags } from '../mock/fakeNotes'
 
 const drawerWidth = 380
 
@@ -246,7 +247,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               // const note = new Note('hello', props.value)
               const note = new Note(props.noteId, props.value)
               NoteAccess.Save(note)
-	      checkTags()
+	            checkTags()
             }}
             style={{
               marginLeft: theme.spacing(2),
