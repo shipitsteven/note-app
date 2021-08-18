@@ -1,1 +1,5 @@
-RIP Kobe Bryant. asldfkff
+RIP Kobe Bryant
+#plas
+
+#maybe
+s
