@@ -69,6 +69,22 @@ class FileStore implements DataStore {
     return new SimpleDataStoreResult(true)
   }
 
+  //   Delete(id: string): DataStoreResult {
+  //     const file = id
+  //     const res = path.join(NOTES_DIR, file)
+  //     fs.unlinkSync(res)
+  //     return new SimpleDataStoreResult(true)
+  //   }
+
+  //     Get(id: string): DataStoreResultWithData<Note | null> {
+  //         if (!fs.existsSync(id)) {
+  //             return new SimpleDataStoreResultWithData(false, null)
+  //         } else {
+  //             const data = fs.readFileSync(id, 'utf8')
+  //             const note = new Note(id, data)
+  //             return new SimpleDataStoreResultWithData(true, note)
+  //         }
+  //     }
   Delete(id: string): DataStoreResult {
     const file = id
     const res = path.join(NOTES_DIR, file)

@@ -31,11 +31,13 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import LabelRoundedIcon from '@material-ui/icons/LabelTwoTone'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
-import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
-import { FileStoreProvider } from '../note_storage'
 import { FolderTree } from './FolderTree'
 import { TreeNode } from '../util/parseTreeFromNotes'
+import { SimpleNotesProvider } from '../note_access'
+import { searchResult } from '../simpleSearch'
+import { checkTags } from '../tagsBar'
+import { Note } from '../note_storage'
 
 const drawerWidth = 380
 
@@ -215,7 +217,6 @@ export default function NotesDrawer(props: Props): JSX.Element {
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
-
             <InputBase
               placeholder="Search…"
               classes={{
@@ -242,9 +243,12 @@ export default function NotesDrawer(props: Props): JSX.Element {
             color="primary"
             disableElevation
             onClick={() => {
-              const DataStoreProvider = new FileStoreProvider()
-              const FileStore = DataStoreProvider.Create()
-              FileStore.Save(props.noteId, props.value)
+              const NotesProvider = new SimpleNotesProvider()
+              const NoteAccess = NotesProvider.Create()
+              // const note = new Note('hello', props.value)
+              const note = new Note(props.noteId, props.value)
+              NoteAccess.Save(note)
+              checkTags()
             }}
             style={{
               marginLeft: theme.spacing(2),
@@ -330,16 +334,19 @@ export default function NotesDrawer(props: Props): JSX.Element {
             </AccordionSummary>
             <AccordionDetails>
               <div className={classes.flexWrapDiv}>
-                {fakeTags.map(({ name, color }) => (
+                {checkTags().map(({ name, color }) => (
                   <Chip
-                    // TODO: integrate with search function
-                    onClick={() => handleChipOnClick(name)}
+                    onClick={() => {
+                      handleChipOnClick(name)
+                      searchResult('#' + name)
+                    }}
                     label={name}
                     key={name}
                     style={{
                       backgroundColor: color,
                       margin: '0.25em',
                     }}
+                    // TODO: add on click handler
                   />
                 ))}
               </div>
