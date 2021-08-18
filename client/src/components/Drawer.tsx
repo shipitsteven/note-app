@@ -32,7 +32,7 @@ import LabelRoundedIcon from '@material-ui/icons/LabelTwoTone'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
 import { SetStateAction } from 'react'
-import { Note, FileStoreProvider } from '../note_storage'
+import { SimpleNotesProvider} from '../note_access'
 import { FolderTree } from './FolderTree'
 import { searchResult } from '../simpleSearch'
 import { checkTags } from '../tagsBar'
@@ -242,12 +242,12 @@ export default function NotesDrawer(props: Props): JSX.Element {
             color="primary"
             disableElevation
             onClick={() => {
-              // TODO: add save function
-              const DataStoreProvider = new FileStoreProvider()
-              const FileStore = DataStoreProvider.Create()
+              const NotesProvider = new SimpleNotesProvider()
+              const NoteAccess = NotesProvider.Create()
               // const note = new Note('hello', props.value)
-              FileStore.Save(props.noteId, props.value)
-              checkTags()
+              const note = new Note(props.noteId, props.value)
+              NoteAccess.Save(note)
+	            checkTags()
             }}
             style={{
               marginLeft: theme.spacing(2),

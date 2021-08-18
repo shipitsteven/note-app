@@ -1,4 +1,4 @@
-RIP Kobe Bryant #what
+RIP Kobe Bryant
 #plas
 
 #maybe
