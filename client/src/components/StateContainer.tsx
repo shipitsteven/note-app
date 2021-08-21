@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Editable } from './Editable'
 import { Preview } from './Preview'
 import NotesDrawer from './Drawer'
+import { getAllNotes } from '../util/getAllNotes'
+import { parseTreeFromNotes } from '../util/parseTreeFromNotes'
+import { searchResult } from '../simpleSearch'
 
 export const StateContainer: React.FC = () => {
   const [value, setValue] = useState(
@@ -11,15 +14,38 @@ export const StateContainer: React.FC = () => {
 
   const [preview, setPreview] = useState(true)
 
+  const [folderTree, setFolderTree] = useState({
+    id: '',
+    name: '',
+    children: [],
+  })
+
+  const [searchTerm, setSearchTerm] = useState('')
+
+  useEffect(() => {
+    setFolderTree(parseTreeFromNotes(getAllNotes()))
+  }, [])
+
+  useEffect(() => {
+    if (searchTerm === '') {
+      setFolderTree(parseTreeFromNotes(getAllNotes()))
+    } else {
+      setFolderTree(parseTreeFromNotes(searchResult(searchTerm)))
+    }
+  }, [searchTerm])
+
   return (
     <>
       <NotesDrawer
         preview={preview}
         value={value}
         noteId={noteId}
+        folderTree={folderTree}
+        searchTerm={searchTerm}
         handlePreview={setPreview.bind(this)}
         handleNoteChange={setValue.bind(this)}
         handleNoteId={setNoteId.bind(this)}
+        handleSearchTerm={setSearchTerm.bind(this)}
       >
         <div className="flex-container">
           <Editable

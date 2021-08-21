@@ -31,11 +31,13 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import LabelRoundedIcon from '@material-ui/icons/LabelTwoTone'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
-import { fakeTags } from '../mock/fakeNotes'
 import { SetStateAction } from 'react'
-import { Note, FileStoreProvider } from '../note_storage'
 import { FolderTree } from './FolderTree'
-import {searchResult} from '../simpleSearch'
+import { TreeNode } from '../util/parseTreeFromNotes'
+import { SimpleNotesProvider } from '../note_access'
+import { searchResult } from '../simpleSearch'
+import { checkTags } from '../tagsBar'
+import { Note } from '../note_storage'
 
 const drawerWidth = 380
 
@@ -158,23 +160,25 @@ interface Props {
   preview: boolean
   noteId: string
   value: string
+  folderTree: TreeNode
+  searchTerm: string
   handlePreview: Dispatch<SetStateAction<boolean>>
   handleNoteChange: Dispatch<SetStateAction<string>>
   handleNoteId: Dispatch<SetStateAction<string>>
+  handleSearchTerm: Dispatch<SetStateAction<string>>
 }
 
 export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
-  const [open, setOpen] = React.useState(false)
-  const [searchKey, setSearchKey] = React.useState('')
+  const [open, setOpen] = React.useState(true)
 
   const handleChipOnClick = (name: string) => {
-    setSearchKey('#tag ' + name)
+    props.handleSearchTerm('#tag:' + name)
   }
 
-  const handleChange = (key:string)=>{
-    setSearchKey(key)
+  const handleChange = (key: string) => {
+    props.handleSearchTerm(key)
   }
 
   const handleDrawerOpen = () => {
@@ -211,10 +215,8 @@ export default function NotesDrawer(props: Props): JSX.Element {
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
+              <SearchIcon />
             </div>
-            <button onClick = {()=>{
-              searchResult(searchKey)
-              }}>search</button>
             <InputBase
               placeholder="Search…"
               classes={{
@@ -222,7 +224,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'Search' }}
-              value={searchKey}
+              value={props.searchTerm}
               onChange={(event) => handleChange(event.target.value)}
             />
           </div>
@@ -241,11 +243,12 @@ export default function NotesDrawer(props: Props): JSX.Element {
             color="primary"
             disableElevation
             onClick={() => {
-              // TODO: add save function
-              const DataStoreProvider = new FileStoreProvider()
-              const FileStore = DataStoreProvider.Create()
+              const NotesProvider = new SimpleNotesProvider()
+              const NoteAccess = NotesProvider.Create()
               // const note = new Note('hello', props.value)
-              FileStore.Save(props.noteId, props.value)
+              const note = new Note(props.noteId, props.value)
+              NoteAccess.Save(note)
+              checkTags()
             }}
             style={{
               marginLeft: theme.spacing(2),
@@ -299,6 +302,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               </AccordionSummary>
               <AccordionDetails>
                 <FolderTree
+                  folderTree={props.folderTree}
                   handleChange={props.handleNoteChange}
                   handleNoteId={props.handleNoteId}
                 />
@@ -330,9 +334,12 @@ export default function NotesDrawer(props: Props): JSX.Element {
             </AccordionSummary>
             <AccordionDetails>
               <div className={classes.flexWrapDiv}>
-                {fakeTags.map(({ name, color }) => (
+                {checkTags().map(({ name, color }) => (
                   <Chip
-                    onClick={() => handleChipOnClick(name)}
+                    onClick={() => {
+                      handleChipOnClick(name)
+                      searchResult('#' + name)
+                    }}
                     label={name}
                     key={name}
                     style={{

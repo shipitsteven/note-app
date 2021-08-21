@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, { SetStateAction } from 'react'
+import React, { SetStateAction, useEffect } from 'react'
 import TreeView from '@material-ui/lab/TreeView'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
@@ -8,7 +8,7 @@ import TreeItem from '@material-ui/lab/TreeItem'
 import { makeStyles } from '@material-ui/core/styles'
 import { Dispatch } from 'react'
 import { FileStoreProvider } from '../note_storage'
-const dirTree = window.require('directory-tree')
+import { Typography } from '@material-ui/core'
 
 const useStyles = makeStyles({
   root: {
@@ -20,14 +20,13 @@ const useStyles = makeStyles({
 })
 
 interface TreeNode {
-  path: string
+  id: string
   name: string
-  size: number
-  type: string
-  children: [TreeNode]
-  extension?: string
+  children: [TreeNode] | any
 }
+
 interface Props {
+  folderTree: TreeNode
   handleChange: Dispatch<SetStateAction<string>>
   handleNoteId: Dispatch<SetStateAction<string>>
 }
@@ -35,31 +34,40 @@ interface Props {
 export const FolderTree: React.FC<Props> = (props) => {
   const classes = useStyles()
 
-  const tree = dirTree('./notes')
+  useEffect(() => {
+    // console.log(props.folderTree)
+  }, [])
 
   // NEXT: each file should be an active link, so user can open the selected note
-  const renderTree = (nodes: TreeNode) => (
-    <TreeItem
-      key={nodes.name}
-      nodeId={nodes.name}
-      label={nodes.name}
-      onLabelClick={(event) => {
-        getNote(nodes, event)
-      }}
-    >
-      {Array.isArray(nodes.children)
-        ? nodes.children.map((node) => renderTree(node))
-        : null}
-    </TreeItem>
-  )
+  const renderTree = (nodes: any) => {
+    if (nodes) {
+      return (
+        <TreeItem
+          key={nodes.name}
+          nodeId={nodes.name}
+          label={nodes.name}
+          onLabelClick={(event) => {
+            getNote(nodes, event)
+          }}
+        >
+          {Array.isArray(nodes.children)
+            ? nodes.children.map((node) => renderTree(node))
+            : null}
+        </TreeItem>
+      )
+    } else {
+      return <Typography>No results found</Typography>
+    }
+  }
 
   const getNote = (node: TreeNode, event: React.MouseEvent) => {
-    if (node.type === 'file' && node.extension === '.md') {
+    const fileExtension = node.id.split('.').slice(-1).toString()
+    if (fileExtension === 'md') {
       // get content of file
       event.preventDefault()
       const DataStoreProvider = new FileStoreProvider()
       const FileStore = DataStoreProvider.Create()
-      const note = FileStore.Get(node.path)
+      const note = FileStore.Get(node.id)
       if (note.IsSuccess()) {
         const text = note.GetResult()?.content || ''
         const id = note.GetResult()?.id || ''
@@ -80,7 +88,7 @@ export const FolderTree: React.FC<Props> = (props) => {
       defaultExpanded={['root']}
       defaultExpandIcon={<ChevronRightIcon />}
     >
-      {renderTree(tree)}
+      {renderTree(props.folderTree)}
     </TreeView>
   )
 }
