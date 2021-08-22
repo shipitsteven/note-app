@@ -9,6 +9,9 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Dispatch } from 'react'
 import { FileStoreProvider } from '../note_storage'
 import { Typography } from '@material-ui/core'
+// import isElectron from 'is-electron'
+// const fs = isElectron() ? window.require('fs') : require('fs')
+import ContextMenu from './ContextMenu'
 
 const useStyles = makeStyles({
   root: {
@@ -39,26 +42,28 @@ export const FolderTree: React.FC<Props> = (props) => {
   const renderTree = (nodes: any) => {
     if (nodes) {
       return (
-        <TreeItem
-          key={nodes.name}
-          nodeId={nodes.name}
-          label={nodes.name}
-          onLabelClick={(event) => {
-            getNote(nodes, event)
-            if (nodes.type === 'folder') {
-              props.handleCurrentFolder(nodes.id)
-            }
-          }}
-          onIconClick={() => {
-            if (nodes.type === 'folder') {
-              props.handleCurrentFolder(nodes.id)
-            }
-          }}
-        >
-          {Array.isArray(nodes.children)
-            ? nodes.children.map((node) => renderTree(node))
-            : null}
-        </TreeItem>
+        <ContextMenu>
+          <TreeItem
+            key={nodes.name}
+            nodeId={nodes.name}
+            label={nodes.name}
+            onLabelClick={(event) => {
+              getNote(nodes, event)
+              if (nodes.type === 'folder') {
+                props.handleCurrentFolder(nodes.id)
+              }
+            }}
+            onIconClick={() => {
+              if (nodes.type === 'folder') {
+                props.handleCurrentFolder(nodes.id)
+              }
+            }}
+          >
+            {Array.isArray(nodes.children)
+              ? nodes.children.map((node) => renderTree(node))
+              : null}
+          </TreeItem>
+        </ContextMenu>
       )
     } else {
       return <Typography>No results found</Typography>

@@ -41,7 +41,7 @@ export const StateContainer: React.FC = () => {
 
   // Update current folder level for create new note/folder
   useEffect(() => {
-    console.log(currentFolder)
+    // console.log(currentFolder)
   }, [currentFolder])
 
   return (
