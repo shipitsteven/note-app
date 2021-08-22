@@ -27,18 +27,15 @@ interface TreeNode {
 
 interface Props {
   folderTree: TreeNode
+  currentFolder: string
   handleChange: Dispatch<SetStateAction<string>>
   handleNoteId: Dispatch<SetStateAction<string>>
+  handleCurrentFolder: Dispatch<SetStateAction<string>>
 }
 
 export const FolderTree: React.FC<Props> = (props) => {
   const classes = useStyles()
 
-  useEffect(() => {
-    // console.log(props.folderTree)
-  }, [])
-
-  // NEXT: each file should be an active link, so user can open the selected note
   const renderTree = (nodes: any) => {
     if (nodes) {
       return (
@@ -48,6 +45,14 @@ export const FolderTree: React.FC<Props> = (props) => {
           label={nodes.name}
           onLabelClick={(event) => {
             getNote(nodes, event)
+            if (nodes.type === 'folder') {
+              props.handleCurrentFolder(nodes.id)
+            }
+          }}
+          onIconClick={() => {
+            if (nodes.type === 'folder') {
+              props.handleCurrentFolder(nodes.id)
+            }
           }}
         >
           {Array.isArray(nodes.children)

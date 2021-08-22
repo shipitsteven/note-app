@@ -12,6 +12,7 @@ export const parseTreeFromNotes = (notes: Note[]): TreeNode => {
   notes.forEach((note) => {
     let currentNode: TreeNode = root
     const split = note.id.split('/')
+
     for (let i = 0; i < split.length - 1; i++) {
       const currentLevel = split[i]
 
@@ -20,10 +21,13 @@ export const parseTreeFromNotes = (notes: Note[]): TreeNode => {
       })
 
       if (childNode === undefined) {
+        const pathArray = split.slice(0, i + 1)
+
         childNode = {
-          id: currentLevel,
+          id: pathArray.join('/'),
           name: currentLevel,
           children: [],
+          type: 'folder',
         }
         currentNode.children.push(childNode)
       }
@@ -35,6 +39,7 @@ export const parseTreeFromNotes = (notes: Note[]): TreeNode => {
       currentNode.children.push({
         id: note.id,
         name: split[split.length - 1],
+        type: 'file',
       })
     }
   })

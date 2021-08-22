@@ -162,10 +162,12 @@ interface Props {
   value: string
   folderTree: TreeNode
   searchTerm: string
+  currentFolder: string
   handlePreview: Dispatch<SetStateAction<boolean>>
   handleNoteChange: Dispatch<SetStateAction<string>>
   handleNoteId: Dispatch<SetStateAction<string>>
   handleSearchTerm: Dispatch<SetStateAction<string>>
+  handleCurrentFolder: Dispatch<SetStateAction<string>>
 }
 
 export default function NotesDrawer(props: Props): JSX.Element {
@@ -174,7 +176,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
   const [open, setOpen] = React.useState(true)
 
   const handleChipOnClick = (name: string) => {
-    props.handleSearchTerm('#tag:' + name)
+    props.handleSearchTerm('#' + name)
   }
 
   const handleChange = (key: string) => {
@@ -303,8 +305,10 @@ export default function NotesDrawer(props: Props): JSX.Element {
               <AccordionDetails>
                 <FolderTree
                   folderTree={props.folderTree}
+                  currentFolder={props.currentFolder}
                   handleChange={props.handleNoteChange}
                   handleNoteId={props.handleNoteId}
+                  handleCurrentFolder={props.handleCurrentFolder}
                 />
               </AccordionDetails>
             </Accordion>

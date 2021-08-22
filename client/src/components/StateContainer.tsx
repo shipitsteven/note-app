@@ -22,10 +22,15 @@ export const StateContainer: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = useState('')
 
+  const [currentFolder, setCurrentFolder] = useState('notes')
+
+  // Initialize folder tree
   useEffect(() => {
-    setFolderTree(parseTreeFromNotes(getAllNotes()))
+    const tree = parseTreeFromNotes(getAllNotes())
+    setFolderTree(tree)
   }, [])
 
+  // Update folder tree base on search result
   useEffect(() => {
     if (searchTerm === '') {
       setFolderTree(parseTreeFromNotes(getAllNotes()))
@@ -33,6 +38,11 @@ export const StateContainer: React.FC = () => {
       setFolderTree(parseTreeFromNotes(searchResult(searchTerm)))
     }
   }, [searchTerm])
+
+  // Update current folder level for create new note/folder
+  useEffect(() => {
+    console.log(currentFolder)
+  }, [currentFolder])
 
   return (
     <>
@@ -42,10 +52,12 @@ export const StateContainer: React.FC = () => {
         noteId={noteId}
         folderTree={folderTree}
         searchTerm={searchTerm}
+        currentFolder={currentFolder}
         handlePreview={setPreview.bind(this)}
         handleNoteChange={setValue.bind(this)}
         handleNoteId={setNoteId.bind(this)}
         handleSearchTerm={setSearchTerm.bind(this)}
+        handleCurrentFolder={setCurrentFolder.bind(this)}
       >
         <div className="flex-container">
           <Editable
