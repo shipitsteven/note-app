@@ -13,7 +13,7 @@ export const Editable: React.FC<Props> = ({
 }: Props) => {
   return (
     <textarea
-      className={clsx({ ['no-preview']: !preview })}
+      className={clsx('preview', { ['hidden']: !preview })}
       value={value}
       onChange={(event) => {
         handleChange(event.target.value)
