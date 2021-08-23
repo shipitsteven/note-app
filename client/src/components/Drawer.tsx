@@ -1,4 +1,4 @@
-import React, { Dispatch } from 'react'
+import React, { Dispatch, useEffect } from 'react'
 import clsx from 'clsx'
 import {
   alpha,
@@ -31,6 +31,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import LabelRoundedIcon from '@material-ui/icons/LabelTwoTone'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
+import Alert from '@material-ui/lab/Alert'
 import { SetStateAction } from 'react'
 import { FolderTree } from './FolderTree'
 import { TreeNode } from '../util/parseTreeFromNotes'
@@ -38,6 +39,7 @@ import { SimpleNotesProvider } from '../note_access'
 import { searchResult } from '../simpleSearch'
 import { checkTags } from '../tagsBar'
 import { Note } from '../note_storage'
+import Collapse from "@material-ui/core/Collapse";
 
 const drawerWidth = 380
 
@@ -66,6 +68,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     hide: {
       display: 'none',
+    },
+    alert: {
+      "& .MuiAlert-message": {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "20%"
+      }
     },
     drawer: {
       width: drawerWidth,
@@ -172,9 +182,16 @@ export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(true)
+  const [alertOpen, setAlertOpen] = React.useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setAlertOpen(false);
+    }, 5000);
+  }, [alertOpen]);
 
   const handleChipOnClick = (name: string) => {
-    props.handleSearchTerm('#tag:' + name)
+    props.handleSearchTerm('#' + name)
   }
 
   const handleChange = (key: string) => {
@@ -249,6 +266,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
               const note = new Note(props.noteId, props.value)
               NoteAccess.Save(note)
               checkTags()
+              setAlertOpen(true)
             }}
             style={{
               marginLeft: theme.spacing(2),
@@ -259,6 +277,11 @@ export default function NotesDrawer(props: Props): JSX.Element {
             Save
           </Button>
         </Toolbar>
+        <Collapse in={alertOpen}>
+          <Alert severity="success" className={classes.alert}>
+            <div>Note Saved</div>
+          </Alert>
+        </Collapse>
       </AppBar>
       <Drawer
         variant="permanent"
@@ -346,7 +369,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
                       backgroundColor: color,
                       margin: '0.25em',
                     }}
-                    // TODO: add on click handler
+                  // TODO: add on click handler
                   />
                 ))}
               </div>

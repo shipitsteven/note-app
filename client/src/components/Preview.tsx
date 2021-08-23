@@ -18,8 +18,8 @@ export const Preview: React.FC<Props> = ({ text, preview }: Props) => {
 
   return (
     <div
-      dangerouslySetInnerHTML={preview ? toHTML() : undefined}
-      className={clsx('preview', { ['hidden']: !preview })}
+      dangerouslySetInnerHTML={preview ? toHTML() : toHTML()}
+      className={clsx({ ['no-preview']: !preview })}
     />
   )
 }
