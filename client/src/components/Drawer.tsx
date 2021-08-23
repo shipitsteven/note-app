@@ -39,7 +39,7 @@ import { SimpleNotesProvider } from '../note_access'
 import { searchResult } from '../simpleSearch'
 import { checkTags } from '../tagsBar'
 import { Note } from '../note_storage'
-import Collapse from "@material-ui/core/Collapse";
+import Snackbar from '@material-ui/core/Snackbar';
 
 const drawerWidth = 380
 
@@ -277,11 +277,11 @@ export default function NotesDrawer(props: Props): JSX.Element {
             Save
           </Button>
         </Toolbar>
-        <Collapse in={alertOpen}>
+        <Snackbar open = {alertOpen}>
           <Alert severity="success" className={classes.alert}>
             <div>Note Saved</div>
           </Alert>
-        </Collapse>
+        </Snackbar>
       </AppBar>
       <Drawer
         variant="permanent"
