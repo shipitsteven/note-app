@@ -11,13 +11,13 @@ preview {
 textarea {
   font-size: 1.1em;
   padding: 0.5em;
-  width: 50%;
+  width: 100%;
   display: inline;
   height: 100%;
 }
 
 preview {
-  width: 50%;
+  width: 100%;
   display: inline;
 }
 
@@ -52,7 +52,7 @@ preview {
 }
 
 .no-preview {
-  width: 75%;
+  width: 100%;
   justify-self: center;
   margin: auto !important;
 }
