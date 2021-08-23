@@ -37,7 +37,7 @@ export const StateContainer: React.FC = () => {
     } else {
       setFolderTree(parseTreeFromNotes(searchResult(searchTerm)))
     }
-  }, [searchTerm])
+  }, [searchTerm, noteId])
 
   // Update current folder level for create new note/folder
   useEffect(() => {

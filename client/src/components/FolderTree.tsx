@@ -11,7 +11,7 @@ import { FileStoreProvider } from '../note_storage'
 import { Typography } from '@material-ui/core'
 // import isElectron from 'is-electron'
 // const fs = isElectron() ? window.require('fs') : require('fs')
-import ContextMenu from './ContextMenu'
+import { ContextMenu } from './ContextMenu'
 
 const useStyles = makeStyles({
   root: {
@@ -42,7 +42,10 @@ export const FolderTree: React.FC<Props> = (props) => {
   const renderTree = (nodes: any) => {
     if (nodes) {
       return (
-        <ContextMenu>
+        <ContextMenu
+          currentFolder={props.currentFolder}
+          handleNoteId={props.handleNoteId}
+        >
           <TreeItem
             key={nodes.name}
             nodeId={nodes.name}

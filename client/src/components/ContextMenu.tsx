@@ -1,20 +1,30 @@
-import React from 'react'
+import React, { useState, Dispatch, SetStateAction } from 'react'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import PropTypes from 'prop-types'
-import TreeItem from '@material-ui/lab/TreeItem'
 import { ClickAwayListener } from '@material-ui/core'
+import { createNewFile } from '../util/createNew'
+import { FormDialog } from './Dialog'
 
 const initialState = {
   mouseX: null,
   mouseY: null,
 }
 
-export default function ContextMenu(props) {
+interface Props {
+  currentFolder: string
+  children: any
+  handleNoteId: Dispatch<SetStateAction<string>>
+}
+
+export const ContextMenu: React.FC<Props> = (props) => {
   const [state, setState] = React.useState<{
     mouseX: null | number
     mouseY: null | number
   }>(initialState)
+
+  const [openDialog, setOpenDialog] = useState(false)
+  const [dialogInputValue, setDialogInputValue] = useState('')
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
@@ -26,6 +36,21 @@ export default function ContextMenu(props) {
 
   const handleClose = () => {
     setState(initialState)
+  }
+
+  const openDialogWindow = () => {
+    setOpenDialog(true)
+    handleClose()
+  }
+
+  // TODO: add snackbar to display note creation success/failure
+  const handleCreateNewNote = () => {
+    const newNoteId = createNewFile(dialogInputValue, props.currentFolder)
+    if (newNoteId !== 'error') {
+      props.handleNoteId(newNoteId)
+    } else {
+      alert('FAILED to create file')
+    }
   }
 
   return (
@@ -43,9 +68,19 @@ export default function ContextMenu(props) {
               : undefined
           }
         >
-          <MenuItem onClick={handleClose}>Add New Note</MenuItem>
+          <MenuItem onClick={openDialogWindow}>Add New Note</MenuItem>
           <MenuItem onClick={handleClose}>Create New Note</MenuItem>
           <MenuItem onClick={handleClose}>Delete</MenuItem>
+          <MenuItem onClick={handleClose}>
+            {/* // TODO: DRY dialog title and description */}
+            <FormDialog
+              open={openDialog}
+              inputValue={dialogInputValue}
+              handleOpen={setOpenDialog.bind(this)}
+              handleInputValue={setDialogInputValue.bind(this)}
+              handleConfirmed={handleCreateNewNote}
+            ></FormDialog>
+          </MenuItem>
         </Menu>
       </ClickAwayListener>
     </div>
@@ -53,5 +88,7 @@ export default function ContextMenu(props) {
 }
 
 ContextMenu.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
+  currentFolder: PropTypes.string.isRequired,
+  handleNoteId: PropTypes.func.isRequired,
 }
