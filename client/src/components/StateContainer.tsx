@@ -5,6 +5,8 @@ import NotesDrawer from './Drawer'
 import { getAllNotes } from '../util/getAllNotes'
 import { parseTreeFromNotes } from '../util/parseTreeFromNotes'
 import { searchResult } from '../simpleSearch'
+import { FileStoreProvider } from '../note_storage'
+const { ipcRenderer } = window.require('electron')
 
 export const StateContainer: React.FC = () => {
   const [value, setValue] = useState(
@@ -24,7 +26,21 @@ export const StateContainer: React.FC = () => {
 
   useEffect(() => {
     setFolderTree(parseTreeFromNotes(getAllNotes()))
+
   }, [])
+
+  useEffect(() => {
+    ipcRenderer.on('changeNote', (event, url) => {
+      setNoteId(`notes${url}`)
+      const DataStoreProvider = new FileStoreProvider()
+      const FileStore = DataStoreProvider.Create()
+      const note = FileStore.Get(`notes${url}`)
+
+      const content = note.GetResult()?.content || ''
+      setValue(content)
+    })
+  }, [])
+
 
   useEffect(() => {
     if (searchTerm === '') {

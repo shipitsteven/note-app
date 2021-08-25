@@ -48,6 +48,7 @@ export const FolderTree: React.FC<Props> = (props) => {
           label={nodes.name}
           onLabelClick={(event) => {
             getNote(nodes, event)
+            console.log(nodes.id)
           }}
         >
           {Array.isArray(nodes.children)

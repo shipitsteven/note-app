@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
-const { app, BrowserWindow, screen: electronScreen } = require('electron')
+const { app, shell, BrowserWindow, screen: electronScreen } = require('electron')
 
 const createMainWindow = () => {
   let mainWindow = new BrowserWindow({
@@ -24,6 +24,24 @@ const createMainWindow = () => {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  var handleRedirect = (e, url) => {
+
+    if (url.startsWith('http://localhost:3000')) {
+      // state container update
+      e.preventDefault()
+      const localUrl = url.substring(21)
+      mainWindow.webContents.send('changeNote', localUrl) // send to renderer
+
+    } else if (url != mainWindow.webContents.getURL()) {
+      e.preventDefault()
+      shell.openExternal(url)
+    }
+  }
+
+  mainWindow.webContents.on('will-navigate', handleRedirect)
+  mainWindow.webContents.on('new-window', handleRedirect)
+
 }
 
 app.whenReady().then(() => {
