@@ -1,7 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
 const { app, shell, BrowserWindow, screen: electronScreen } = require('electron')
 
-
 const createMainWindow = () => {
   let mainWindow = new BrowserWindow({
     width: electronScreen.getPrimaryDisplay().workArea.width * 0.8,
@@ -27,7 +26,9 @@ const createMainWindow = () => {
   })
 
   var handleRedirect = (e, url) => {
-    if(url != mainWindow.webContents.getURL()) {
+    if (url.startsWith('/')) {
+      // state container update
+    } else if (url != mainWindow.webContents.getURL()) {
       e.preventDefault()
       shell.openExternal(url)
     }
@@ -37,8 +38,6 @@ const createMainWindow = () => {
   mainWindow.webContents.on('new-window', handleRedirect)
   
 }
-
-
 
 app.whenReady().then(() => {
   createMainWindow()
