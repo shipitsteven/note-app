@@ -49,6 +49,7 @@ export const FolderTree: React.FC<Props> = (props) => {
           onLabelClick={(event) => {
             getNote(nodes, event)
             console.log(nodes.id)
+            // TODO: update workspace file with last opened note with nodes.id
           }}
         >
           {Array.isArray(nodes.children)
