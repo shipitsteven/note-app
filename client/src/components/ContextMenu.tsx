@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { ClickAwayListener } from '@material-ui/core'
 import { createNewFile } from '../util/createNew'
 import { FormDialog } from './Dialog'
+const { dialog } = window.require('electron').remote
 
 const initialState = {
   mouseX: null,
@@ -39,17 +40,17 @@ export const ContextMenu: React.FC<Props> = (props) => {
   }
 
   const openDialogWindow = () => {
-    setOpenDialog(true)
     handleClose()
+    setOpenDialog(true)
   }
 
   // TODO: add snackbar to display note creation success/failure
   const handleCreateNewNote = () => {
     const newNoteId = createNewFile(dialogInputValue, props.currentFolder)
-    if (newNoteId !== 'error') {
-      props.handleNoteId(newNoteId)
+    if (newNoteId === 'file already exists') {
+      dialog.showErrorBox('Error', 'File already exists.')
     } else {
-      alert('FAILED to create file')
+      props.handleNoteId(newNoteId)
     }
   }
 

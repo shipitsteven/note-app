@@ -1,15 +1,16 @@
 import isElectron from 'is-electron'
 const fs = isElectron() ? window.require('fs') : require('fs')
+const sanitize = window.require('sanitize-filename')
 
 export const createNewFile = (title: string, currentFolder: string): string => {
-  // TODO: sanitize file name
-  const filePath = `./${currentFolder}/${title}.md`
+  const cleanTitle = sanitize(title)
+  const filePath = `./${currentFolder}/${cleanTitle}.md`
+
   try {
-    // TODO: check if file already exist
+    fs.accessSync(filePath)
+    return 'file already exists'
+  } catch (e) {
     fs.writeFileSync(filePath, '')
     return filePath
-  } catch (e) {
-    console.log(e)
-    return 'error'
   }
 }

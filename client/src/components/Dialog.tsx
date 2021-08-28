@@ -7,6 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import PropTypes from 'prop-types'
+import { Typography } from '@material-ui/core'
 
 interface Props {
   open: boolean
@@ -18,13 +19,12 @@ interface Props {
 
 export const FormDialog: React.FC<Props> = (props) => {
   const handleClose = () => {
-    props.handleConfirmed(false)
     props.handleOpen(!open)
   }
 
   const handleConfirm = () => {
-    props.handleConfirmed()
     handleClose()
+    props.handleConfirmed()
   }
 
   return (
@@ -36,6 +36,15 @@ export const FormDialog: React.FC<Props> = (props) => {
       >
         <DialogTitle id="form-dialog-title">Create a New Note</DialogTitle>
         <DialogContent>
+          <DialogContentText>
+            <Typography variant="subtitle1" color="textPrimary" gutterBottom>
+              Non-valid characters will be removed.
+            </Typography>
+            <Typography>
+              You do not need to add .md extension, it will automatically be
+              added.
+            </Typography>
+          </DialogContentText>
           <TextField
             autoFocus
             fullWidth
