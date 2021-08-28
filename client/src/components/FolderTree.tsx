@@ -31,6 +31,7 @@ interface TreeNode {
 interface Props {
   folderTree: TreeNode
   currentFolder: string
+  noteId: string
   handleChange: Dispatch<SetStateAction<string>>
   handleNoteId: Dispatch<SetStateAction<string>>
   handleCurrentFolder: Dispatch<SetStateAction<string>>
@@ -43,8 +44,10 @@ export const FolderTree: React.FC<Props> = (props) => {
     if (nodes) {
       return (
         <ContextMenu
+          noteId={props.noteId}
           currentFolder={props.currentFolder}
           handleNoteId={props.handleNoteId}
+          handleNoteChange={props.handleChange}
         >
           <TreeItem
             key={nodes.name}
@@ -61,6 +64,8 @@ export const FolderTree: React.FC<Props> = (props) => {
                 props.handleCurrentFolder(nodes.id)
               }
             }}
+            // TODO: make item selected when right clicked
+            onMouseDown={(e) => console.log(e)}
           >
             {Array.isArray(nodes.children)
               ? nodes.children.map((node) => renderTree(node))

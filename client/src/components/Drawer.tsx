@@ -327,6 +327,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
                 <FolderTree
                   folderTree={props.folderTree}
                   currentFolder={props.currentFolder}
+                  noteId={props.noteId}
                   handleChange={props.handleNoteChange}
                   handleNoteId={props.handleNoteId}
                   handleCurrentFolder={props.handleCurrentFolder}

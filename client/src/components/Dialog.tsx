@@ -11,21 +11,48 @@ import { Typography } from '@material-ui/core'
 
 interface Props {
   open: boolean
+  operation: string
   inputValue: string
-  handleOpen: Dispatch<SetStateAction<boolean>>
+  title: string
+  handleOpen: Dispatch<SetStateAction<string>>
   handleInputValue: Dispatch<SetStateAction<string>>
   handleConfirmed: any
 }
 
 export const FormDialog: React.FC<Props> = (props) => {
   const handleClose = () => {
-    props.handleOpen(!open)
+    props.handleOpen('')
   }
 
   const handleConfirm = () => {
     handleClose()
     props.handleConfirmed()
   }
+
+  const getNewNoteContent = () =>
+    props.operation === 'newNote' ? (
+      <DialogContent>
+        <DialogContentText>
+          <Typography variant="subtitle1" color="textPrimary" gutterBottom>
+            Non-valid characters will be removed.
+          </Typography>
+          <Typography>
+            You do not need to add .md extension, it will automatically be
+            added.
+          </Typography>
+        </DialogContentText>
+        <TextField
+          autoFocus
+          fullWidth
+          margin="dense"
+          id="name"
+          label="Name your new note"
+          type="text"
+          value={props.inputValue}
+          onChange={(event) => props.handleInputValue(event.target.value)}
+        />
+      </DialogContent>
+    ) : null
 
   return (
     <div>
@@ -34,28 +61,8 @@ export const FormDialog: React.FC<Props> = (props) => {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Create a New Note</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            <Typography variant="subtitle1" color="textPrimary" gutterBottom>
-              Non-valid characters will be removed.
-            </Typography>
-            <Typography>
-              You do not need to add .md extension, it will automatically be
-              added.
-            </Typography>
-          </DialogContentText>
-          <TextField
-            autoFocus
-            fullWidth
-            margin="dense"
-            id="name"
-            label="Name your new note"
-            type="text"
-            value={props.inputValue}
-            onChange={(event) => props.handleInputValue(event.target.value)}
-          />
-        </DialogContent>
+        <DialogTitle id="form-dialog-title">{props.title}</DialogTitle>
+        {getNewNoteContent()}
         <DialogActions>
           <Button onClick={handleClose} color="secondary">
             Cancel
@@ -71,6 +78,8 @@ export const FormDialog: React.FC<Props> = (props) => {
 
 FormDialog.propTypes = {
   open: PropTypes.bool.isRequired,
+  operation: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
   inputValue: PropTypes.string.isRequired,
   handleOpen: PropTypes.func.isRequired,
   handleInputValue: PropTypes.func.isRequired,

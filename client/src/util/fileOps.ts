@@ -27,3 +27,12 @@ export const createNewFile = (
     }
   }
 }
+
+export const deleteFile = (path: string) => {
+  try {
+    fs.unlinkSync(path)
+    return { result: 'success', message: 'Note deleted' }
+  } catch (e) {
+    return { result: 'error', message: e }
+  }
+}

@@ -3,7 +3,7 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import PropTypes from 'prop-types'
 import { ClickAwayListener } from '@material-ui/core'
-import { createNewFile } from '../util/createNew'
+import { createNewFile, deleteFile } from '../util/fileOps'
 import { FormDialog } from './Dialog'
 import { useSnackbar } from 'notistack'
 
@@ -15,7 +15,9 @@ const initialState = {
 interface Props {
   currentFolder: string
   children: any
+  noteId: string
   handleNoteId: Dispatch<SetStateAction<string>>
+  handleNoteChange: Dispatch<SetStateAction<string>>
 }
 
 export const ContextMenu: React.FC<Props> = (props) => {
@@ -24,7 +26,7 @@ export const ContextMenu: React.FC<Props> = (props) => {
     mouseY: null | number
   }>(initialState)
 
-  const [openDialog, setOpenDialog] = useState(false)
+  const [openDialog, setOpenDialog] = useState('')
   const [dialogInputValue, setDialogInputValue] = useState('')
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -39,9 +41,9 @@ export const ContextMenu: React.FC<Props> = (props) => {
     setState(initialState)
   }
 
-  const openDialogWindow = () => {
+  const openDialogWindow = (operation: string) => {
     handleClose()
-    setOpenDialog(true)
+    setOpenDialog(operation)
   }
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
@@ -52,6 +54,7 @@ export const ContextMenu: React.FC<Props> = (props) => {
       enqueueSnackbar(creation.message, { variant: 'error' })
     } else {
       props.handleNoteId(creation.path)
+      props.handleNoteChange('')
       if (creation.result === 'success' && creation.warning) {
         enqueueSnackbar(
           `Invalid characters found, new note name is: ${creation.newName}`,
@@ -62,6 +65,20 @@ export const ContextMenu: React.FC<Props> = (props) => {
       }
       enqueueSnackbar('New note created', { variant: 'success' })
     }
+  }
+
+  const handleDelete = () => {
+    console.log('whatever')
+    const deletion = deleteFile(props.noteId)
+    if (deletion.result === 'error') {
+      enqueueSnackbar(deletion.message, { variant: 'error' })
+    } else {
+      enqueueSnackbar('Note deleted', { variant: 'info' })
+    }
+  }
+
+  const getFilename = (): string => {
+    return props.noteId.split('/').slice(-1)[0]
   }
 
   return (
@@ -79,18 +96,31 @@ export const ContextMenu: React.FC<Props> = (props) => {
               : undefined
           }
         >
-          <MenuItem onClick={openDialogWindow}>Add New Note</MenuItem>
+          <MenuItem id="newNote" onClick={() => openDialogWindow('newNote')}>
+            Add New Note
+          </MenuItem>
           <MenuItem onClick={handleClose}>Create New Note</MenuItem>
-          <MenuItem onClick={handleClose}>Delete</MenuItem>
+          <MenuItem onClick={() => openDialogWindow('delete')}>Delete</MenuItem>
           <MenuItem onClick={handleClose}>
             {/* // TODO: DRY dialog title and description */}
             <FormDialog
-              open={openDialog}
+              open={openDialog === 'newNote'}
+              operation="newNote"
+              title="Create a New Note"
               inputValue={dialogInputValue}
               handleOpen={setOpenDialog.bind(this)}
               handleInputValue={setDialogInputValue.bind(this)}
               handleConfirmed={handleCreateNewNote}
-            ></FormDialog>
+            />
+            <FormDialog
+              open={openDialog === 'delete'}
+              operation="delete"
+              title={`Delete ${getFilename()}`}
+              inputValue={dialogInputValue}
+              handleOpen={setOpenDialog.bind(this)}
+              handleInputValue={setDialogInputValue.bind(this)}
+              handleConfirmed={handleDelete}
+            />
           </MenuItem>
         </Menu>
       </ClickAwayListener>
@@ -100,6 +130,8 @@ export const ContextMenu: React.FC<Props> = (props) => {
 
 ContextMenu.propTypes = {
   children: PropTypes.node,
+  noteId: PropTypes.string.isRequired,
   currentFolder: PropTypes.string.isRequired,
   handleNoteId: PropTypes.func.isRequired,
+  handleNoteChange: PropTypes.func.isRequired,
 }
