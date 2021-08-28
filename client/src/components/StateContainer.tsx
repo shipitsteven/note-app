@@ -5,6 +5,7 @@ import NotesDrawer from './Drawer'
 import { getAllNotes } from '../util/getAllNotes'
 import { parseTreeFromNotes } from '../util/parseTreeFromNotes'
 import { searchResult } from '../simpleSearch'
+import { SnackbarProvider } from 'notistack'
 
 export const StateContainer: React.FC = () => {
   const [value, setValue] = useState(
@@ -46,28 +47,35 @@ export const StateContainer: React.FC = () => {
 
   return (
     <>
-      <NotesDrawer
-        preview={preview}
-        value={value}
-        noteId={noteId}
-        folderTree={folderTree}
-        searchTerm={searchTerm}
-        currentFolder={currentFolder}
-        handlePreview={setPreview.bind(this)}
-        handleNoteChange={setValue.bind(this)}
-        handleNoteId={setNoteId.bind(this)}
-        handleSearchTerm={setSearchTerm.bind(this)}
-        handleCurrentFolder={setCurrentFolder.bind(this)}
+      <SnackbarProvider
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
       >
-        <div className="flex-container">
-          <Editable
-            value={value}
-            handleChange={setValue.bind(this)}
-            preview={preview}
-          />
-          <Preview text={value} preview={preview} />
-        </div>
-      </NotesDrawer>
+        <NotesDrawer
+          preview={preview}
+          value={value}
+          noteId={noteId}
+          folderTree={folderTree}
+          searchTerm={searchTerm}
+          currentFolder={currentFolder}
+          handlePreview={setPreview.bind(this)}
+          handleNoteChange={setValue.bind(this)}
+          handleNoteId={setNoteId.bind(this)}
+          handleSearchTerm={setSearchTerm.bind(this)}
+          handleCurrentFolder={setCurrentFolder.bind(this)}
+        >
+          <div className="flex-container">
+            <Editable
+              value={value}
+              handleChange={setValue.bind(this)}
+              preview={preview}
+            />
+            <Preview text={value} preview={preview} />
+          </div>
+        </NotesDrawer>
+      </SnackbarProvider>
     </>
   )
 }

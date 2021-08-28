@@ -31,7 +31,6 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import LabelRoundedIcon from '@material-ui/icons/LabelTwoTone'
 import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
-import Alert from '@material-ui/lab/Alert'
 import { SetStateAction } from 'react'
 import { FolderTree } from './FolderTree'
 import { TreeNode } from '../util/parseTreeFromNotes'
@@ -39,7 +38,7 @@ import { SimpleNotesProvider } from '../note_access'
 import { searchResult } from '../simpleSearch'
 import { checkTags } from '../tagsBar'
 import { Note } from '../note_storage'
-import Snackbar from '@material-ui/core/Snackbar';
+import { useSnackbar } from 'notistack'
 
 const drawerWidth = 380
 
@@ -70,12 +69,12 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'none',
     },
     alert: {
-      "& .MuiAlert-message": {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "20%"
-      }
+      '& .MuiAlert-message': {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '20%',
+      },
     },
     drawer: {
       width: drawerWidth,
@@ -184,13 +183,6 @@ export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(true)
-  const [alertOpen, setAlertOpen] = React.useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setAlertOpen(false);
-    }, 5000);
-  }, [alertOpen]);
 
   const handleChipOnClick = (name: string) => {
     props.handleSearchTerm('#' + name)
@@ -207,6 +199,8 @@ export default function NotesDrawer(props: Props): JSX.Element {
   const handleDrawerClose = () => {
     setOpen(false)
   }
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
   return (
     <div className={classes.root}>
@@ -264,11 +258,20 @@ export default function NotesDrawer(props: Props): JSX.Element {
             onClick={() => {
               const NotesProvider = new SimpleNotesProvider()
               const NoteAccess = NotesProvider.Create()
-              // const note = new Note('hello', props.value)
               const note = new Note(props.noteId, props.value)
-              NoteAccess.Save(note)
-              checkTags()
-              setAlertOpen(true)
+              try {
+                const saveResult = NoteAccess.Save(note)
+                if (saveResult.IsSuccess()) {
+                  enqueueSnackbar('Note Saved!', {
+                    variant: 'success',
+                  })
+                  checkTags()
+                }
+              } catch (e) {
+                enqueueSnackbar(`${e}`, {
+                  variant: 'error',
+                })
+              }
             }}
             style={{
               marginLeft: theme.spacing(2),
@@ -279,11 +282,6 @@ export default function NotesDrawer(props: Props): JSX.Element {
             Save
           </Button>
         </Toolbar>
-        <Snackbar open = {alertOpen}>
-          <Alert severity="success" className={classes.alert}>
-            <div>Note Saved</div>
-          </Alert>
-        </Snackbar>
       </AppBar>
       <Drawer
         variant="permanent"
@@ -373,7 +371,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
                       backgroundColor: color,
                       margin: '0.25em',
                     }}
-                  // TODO: add on click handler
+                    // TODO: add on click handler
                   />
                 ))}
               </div>
