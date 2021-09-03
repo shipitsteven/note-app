@@ -39,7 +39,7 @@ import { SimpleNotesProvider } from '../note_access'
 import { searchResult } from '../simpleSearch'
 import { checkTags } from '../tagsBar'
 import { Note } from '../note_storage'
-import Snackbar from '@material-ui/core/Snackbar';
+import Snackbar from '@material-ui/core/Snackbar'
 
 const drawerWidth = 380
 
@@ -70,12 +70,12 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'none',
     },
     alert: {
-      "& .MuiAlert-message": {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "20%"
-      }
+      '& .MuiAlert-message': {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '20%',
+      },
     },
     drawer: {
       width: drawerWidth,
@@ -182,13 +182,13 @@ export default function NotesDrawer(props: Props): JSX.Element {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(true)
-  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertOpen, setAlertOpen] = React.useState(false)
 
   useEffect(() => {
     setTimeout(() => {
-      setAlertOpen(false);
-    }, 5000);
-  }, [alertOpen]);
+      setAlertOpen(false)
+    }, 5000)
+  }, [alertOpen])
 
   const handleChipOnClick = (name: string) => {
     props.handleSearchTerm('#' + name)
@@ -200,10 +200,12 @@ export default function NotesDrawer(props: Props): JSX.Element {
 
   const handleDrawerOpen = () => {
     setOpen(true)
+    // TODO: update workspace file on drawer state
   }
 
   const handleDrawerClose = () => {
     setOpen(false)
+    // TODO: update workspace file on drawer state
   }
 
   return (
@@ -277,7 +279,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
             Save
           </Button>
         </Toolbar>
-        <Snackbar open = {alertOpen}>
+        <Snackbar open={alertOpen}>
           <Alert severity="success" className={classes.alert}>
             <div>Note Saved</div>
           </Alert>
@@ -369,7 +371,7 @@ export default function NotesDrawer(props: Props): JSX.Element {
                       backgroundColor: color,
                       margin: '0.25em',
                     }}
-                  // TODO: add on click handler
+                    // TODO: add on click handler
                   />
                 ))}
               </div>

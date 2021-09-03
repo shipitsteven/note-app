@@ -26,7 +26,6 @@ export const StateContainer: React.FC = () => {
 
   useEffect(() => {
     setFolderTree(parseTreeFromNotes(getAllNotes()))
-
   }, [])
 
   useEffect(() => {
@@ -40,7 +39,6 @@ export const StateContainer: React.FC = () => {
       setValue(content)
     })
   }, [])
-
 
   useEffect(() => {
     if (searchTerm === '') {
