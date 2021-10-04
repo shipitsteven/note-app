@@ -28,7 +28,7 @@ export const createNewFile = (
   }
 }
 
-export const deleteFile = (path: string) => {
+export const deleteFile = (path: string): Record<string, any> => {
   try {
     fs.unlinkSync(path)
     return { result: 'success', message: 'Note deleted' }
