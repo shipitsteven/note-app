@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, { SetStateAction } from 'react'
+import React, { SetStateAction, useState } from 'react'
 import TreeView from '@material-ui/lab/TreeView'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
@@ -9,8 +9,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Dispatch } from 'react'
 import { FileStoreProvider } from '../note_storage'
 import { Typography } from '@material-ui/core'
-// import isElectron from 'is-electron'
-// const fs = isElectron() ? window.require('fs') : require('fs')
 import { ContextMenu } from './ContextMenu'
 
 const useStyles = makeStyles({
@@ -39,6 +37,7 @@ interface Props {
 
 export const FolderTree: React.FC<Props> = (props) => {
   const classes = useStyles()
+  const [currentSelection, setCurrentSelection] = useState('')
 
   const renderTree = (nodes: any) => {
     if (nodes) {
@@ -50,11 +49,13 @@ export const FolderTree: React.FC<Props> = (props) => {
           handleNoteChange={props.handleChange}
         >
           <TreeItem
+            id={nodes.name}
             key={nodes.name}
             nodeId={nodes.name}
             label={nodes.name}
             onLabelClick={(event) => {
               getNote(nodes, event)
+              setCurrentSelection(nodes.name)
               if (nodes.type === 'folder') {
                 props.handleCurrentFolder(nodes.id)
               }
@@ -64,8 +65,11 @@ export const FolderTree: React.FC<Props> = (props) => {
                 props.handleCurrentFolder(nodes.id)
               }
             }}
-            // TODO: make item selected when right clicked
-            onMouseDown={(e) => console.log(e)}
+            // NEXT: lift state out to ContextMenu
+            onContextMenu={(e) => {
+              console.log(nodes.id)
+              e.stopPropagation()
+            }}
           >
             {Array.isArray(nodes.children)
               ? nodes.children.map((node) => renderTree(node))
@@ -105,6 +109,7 @@ export const FolderTree: React.FC<Props> = (props) => {
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpanded={['root']}
       defaultExpandIcon={<ChevronRightIcon />}
+      selected={currentSelection}
     >
       {renderTree(props.folderTree)}
     </TreeView>

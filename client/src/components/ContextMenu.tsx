@@ -28,6 +28,7 @@ export const ContextMenu: React.FC<Props> = (props) => {
 
   const [openDialog, setOpenDialog] = useState('')
   const [dialogInputValue, setDialogInputValue] = useState('')
+  //TODO: ContextMenu needs to know the current selection by reading state from the TreeView. This can be grabbed using onContextMenu in FolderTree line 68.
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
@@ -68,7 +69,6 @@ export const ContextMenu: React.FC<Props> = (props) => {
   }
 
   const handleDelete = () => {
-    console.log('whatever')
     const deletion = deleteFile(props.noteId)
     if (deletion.result === 'error') {
       enqueueSnackbar(deletion.message, { variant: 'error' })
@@ -78,6 +78,7 @@ export const ContextMenu: React.FC<Props> = (props) => {
   }
 
   const getFilename = (): string => {
+    // console.log(props.currentFolder)
     return props.noteId.split('/').slice(-1)[0]
   }
 
@@ -101,8 +102,10 @@ export const ContextMenu: React.FC<Props> = (props) => {
           </MenuItem>
           <MenuItem onClick={handleClose}>Create New Note</MenuItem>
           <MenuItem onClick={() => openDialogWindow('delete')}>Delete</MenuItem>
+          <MenuItem onClick={() => openDialogWindow('deleteFolder')}>
+            Delete Folder
+          </MenuItem>
           <MenuItem onClick={handleClose}>
-            {/* // TODO: DRY dialog title and description */}
             <FormDialog
               open={openDialog === 'newNote'}
               operation="newNote"
@@ -116,6 +119,15 @@ export const ContextMenu: React.FC<Props> = (props) => {
               open={openDialog === 'delete'}
               operation="delete"
               title={`Delete ${getFilename()}`}
+              inputValue={dialogInputValue}
+              handleOpen={setOpenDialog.bind(this)}
+              handleInputValue={setDialogInputValue.bind(this)}
+              handleConfirmed={handleDelete}
+            />
+            <FormDialog
+              open={openDialog === 'deleteFolder'}
+              operation="deleteFolder"
+              title={`Delete Folder ${getFilename()}`}
               inputValue={dialogInputValue}
               handleOpen={setOpenDialog.bind(this)}
               handleInputValue={setDialogInputValue.bind(this)}
